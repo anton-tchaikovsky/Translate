@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Single
 
 class Repository(private val dataSourse: IDataSourse<DataModel>) : IRepository<DataModel> {
 
-    override fun getDataModel(word: String): Single<DataModel> =
-        dataSourse.getDataModel(word)
+    override fun getDataModel(text: String): Single<DataModel> =
+        dataSourse.getDataModel(text)
 
 }

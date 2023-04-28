@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RemoteDataSourse: IDataSourse<DataModel> {
 
-    override fun getDataModel(word: String): Single<DataModel> = getServiceApiSkyeng().search(word)
+    override fun getDataModel(text: String): Single<DataModel> = getServiceApiSkyeng().search(text)
 
     private fun getServiceApiSkyeng(): IApiSkyeng = createRetrofitApiSkyeng().create(IApiSkyeng::class.java)
 

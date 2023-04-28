@@ -5,10 +5,10 @@ import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.repository.IRepository
 import io.reactivex.rxjava3.core.Single
 
-class MainInteractor(private val repository: IRepository<DataModel>): IMainInteractor<AppState> {
+class TranslateInteractor(private val repository: IRepository<DataModel>): ITranslateInteractor<AppState> {
 
-    override fun getDataModel(word: String): Single<AppState> =
-        repository.getDataModel(word).map {
+    override fun getDataModel(text: String): Single<AppState> =
+        repository.getDataModel(text).map {
             AppState.Success(it)
         }
 

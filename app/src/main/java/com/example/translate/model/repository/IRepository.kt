@@ -4,6 +4,6 @@ import io.reactivex.rxjava3.core.Single
 
 interface IRepository <T: Any> {
 
-    fun getDataModel(word: String): Single<T>
+    fun getDataModel(text: String): Single<T>
 
 }
