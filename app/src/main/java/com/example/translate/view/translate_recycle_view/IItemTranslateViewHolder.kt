@@ -2,8 +2,10 @@ package com.example.translate.view.translate_recycle_view
 
 interface IItemTranslateViewHolder: IItemRecycleView {
 
-    fun showTranslate(translate: String)
+    fun showTextTranslate(textTranslate: String)
 
-    fun showNote(note: String)
+    fun showText(text: String)
+
+    fun showTranscription (transcription: String)
 
 }

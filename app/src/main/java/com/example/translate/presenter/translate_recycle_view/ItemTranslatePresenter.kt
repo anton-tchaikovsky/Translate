@@ -1,9 +1,9 @@
 package com.example.translate.presenter.translate_recycle_view
 
-import com.example.translate.model.data.dto.Meaning
+import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.IItemTranslateViewHolder
 
-class ItemTranslatePresenter(override val entityList: MutableList<Meaning> = mutableListOf()) :
+class ItemTranslatePresenter(override val entityList: MutableList<TranslateEntity> = mutableListOf()) :
     IItemTranslatePresenter {
 
     override fun getCount() = entityList.size
@@ -13,10 +13,9 @@ class ItemTranslatePresenter(override val entityList: MutableList<Meaning> = mut
     override fun bindView(itemView: IItemTranslateViewHolder) {
         itemView.itemPosition?.let {
             with(entityList[it]) {
-                itemView.showTranslate(translation.text)
-                translation.note?.let { note ->
-                    itemView.showNote(note)
-                }
+                itemView.showText(text)
+                itemView.showTranscription(transcription)
+                itemView.showTextTranslate(textTranslation)
             }
         }
     }

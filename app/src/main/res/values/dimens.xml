@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<dimen name="margin_search_fab">24dp</dimen>
+<dimen name="margin_search_fab">4dp</dimen>
     <dimen name="list_item_spacing">16dp</dimen>
     <dimen name="list_item_spacing_half">8dp</dimen>
+
+    <dimen name="height_search_text_card_view">144dp</dimen>
+    <dimen name="height_translate_card_view">144dp</dimen>
 
 </resources>

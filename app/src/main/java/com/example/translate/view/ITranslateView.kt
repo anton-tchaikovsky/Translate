@@ -6,10 +6,6 @@ interface ITranslateView {
 
     fun initView()
 
-    fun showSearchDialog()
-
-    fun hideSearchDialog()
-
     fun renderData(appState: AppState)
 
 }

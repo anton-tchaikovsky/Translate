@@ -12,8 +12,6 @@ interface ITranslatePresenter<V: ITranslateView, T: AppState> {
 
     fun detachView()
 
-    fun onSearchDialog()
-
     fun onSearchWord(text: String?)
 
 }

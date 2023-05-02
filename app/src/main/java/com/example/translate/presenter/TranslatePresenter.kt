@@ -1,10 +1,12 @@
 package com.example.translate.presenter
 
 import com.example.translate.model.data.AppState
+import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.data_sourse.api.RemoteDataSourse
 import com.example.translate.model.repository.Repository
 import com.example.translate.presenter.translate_recycle_view.IItemTranslatePresenter
 import com.example.translate.presenter.translate_recycle_view.ItemTranslatePresenter
+import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
 import com.example.translate.view.ITranslateView
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -39,37 +41,78 @@ class TranslatePresenter<V : ITranslateView, T : AppState>(
             this.view = null
     }
 
-    override fun onSearchDialog() {
-        view?.showSearchDialog()
+    override fun onSearchWord(text: String?) {
+        if (!text.isNullOrEmpty())
+            subscribeToLoadingDataModel(text)
+        else
+            onEmptySearchText()
     }
 
-    override fun onSearchWord(text: String?) {
-        view?.hideSearchDialog()
-        if (!text.isNullOrEmpty())
-            compositeDisposable.add(
-                interactor.getDataModel(text)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(mainThreadScheduler)
-                    .doOnSubscribe {
-                        view?.renderData(AppState.Loading)
+    private fun onEmptySearchText() {
+        view?.run {
+            itemTranslatePresenter.entityList.apply {
+                clear()
+            }
+            renderData(AppState.Info(EMPTY_SEARCH_TEXT))
+        }
+    }
+
+    private fun onEmptyDataModel() {
+        view?.run {
+            itemTranslatePresenter.entityList.apply {
+                clear()
+            }
+            renderData(AppState.Info(EMPTY_DATA_MODEL))
+        }
+    }
+
+    private fun onCorrectDataModel(dataModel: DataModel) {
+        view?.run {
+            itemTranslatePresenter.entityList.apply {
+                clear()
+                addAll(dataModel.map {
+                    mapFromDataModelItemToTranslateEntity(it)
+                })
+            }
+            renderData(AppState.Success(dataModel))
+        }
+    }
+
+    private fun onErrorLoadingDataModel(error: Throwable) {
+        view?.run {
+            itemTranslatePresenter.entityList.apply {
+                clear()
+            }
+            renderData(AppState.Error(error))
+        }
+    }
+
+    private fun subscribeToLoadingDataModel(text: String) {
+        compositeDisposable.add(
+            interactor.getDataModel(text)
+                .subscribeOn(Schedulers.io())
+                .observeOn(mainThreadScheduler)
+                .doOnSubscribe {
+                    view?.renderData(AppState.Loading)
+                }
+                .subscribeBy(
+                    onSuccess = {
+                        val dataModel = (it as AppState.Success).dataModel
+                        if (dataModel.isEmpty())
+                            onEmptyDataModel()
+                        else
+                            onCorrectDataModel(dataModel)
+                    },
+                    onError = {
+                        onErrorLoadingDataModel(it)
                     }
-                    .subscribeBy(
-                        onSuccess = {
-                            view?.run {
-                                itemTranslatePresenter.entityList.apply {
-                                    clear()
-                                    addAll((it as AppState.Success).dataModel[0].meanings)
-                                }
-                                renderData(it)
-                            }
-                        },
-                        onError = {
-                            view?.run {
-                                renderData(AppState.Error(it))
-                            }
-                        }
-                    )
-            )
+                )
+        )
+    }
+
+    companion object {
+        private const val EMPTY_DATA_MODEL = "Перевод не найден"
+        private const val EMPTY_SEARCH_TEXT = "Введите слово для перевода"
     }
 
 }
