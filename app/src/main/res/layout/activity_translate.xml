@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp"
+    android:padding="@dimen/padding_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.TranslateActivity">
 
@@ -31,6 +31,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_text_layout"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="@dimen/margin_top_translate_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
