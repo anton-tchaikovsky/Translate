@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    activity_translate-->
+    <dimen name="padding_container">4dp</dimen>
+    <dimen name="margin_top_translate_layout">8dp</dimen>
+
+    <!--    search_text_layout-->
+    <dimen name="height_search_text_card_view">144dp</dimen>
+    <dimen name="padding_container_search_card_view">8dp</dimen>
+    <dimen name="margin_end_container_search_text_edit_text">8dp</dimen>
+
+    <!--    item_translate_layout-->
+    <dimen name="height_translate_card_view">144dp</dimen>
+    <dimen name="padding_container_translate_card_view">8dp</dimen>
+
+</resources>
