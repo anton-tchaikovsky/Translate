@@ -29,9 +29,15 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        hideKeybooard()
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
+    }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun onRetainCustomNonConfigurationInstance(): ITranslatePresenter<ITranslateView, AppState> {
+        return translatePresenter
     }
 
     override fun initView() {
@@ -40,9 +46,10 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         initTranslateRecycleView()
     }
 
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override fun createPresenter(): ITranslatePresenter<ITranslateView, AppState> =
-        TranslatePresenter(mainThreadScheduler = AndroidSchedulers.mainThread())
-
+        lastCustomNonConfigurationInstance as? TranslatePresenter<ITranslateView, AppState>
+            ?: TranslatePresenter(mainThreadScheduler = AndroidSchedulers.mainThread())
 
     override fun renderData(appState: AppState) {
         when (appState) {

@@ -28,10 +28,13 @@ class TranslatePresenter<V : ITranslateView, T : AppState>(
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
+    private var dataModel:DataModel = DataModel()
+
     override fun attachView(view: V) {
         if (this.view != view)
             this.view = view.also {
                 it.initView()
+                it.renderData(AppState.Success(dataModel))
             }
     }
 
@@ -49,6 +52,7 @@ class TranslatePresenter<V : ITranslateView, T : AppState>(
     }
 
     private fun onEmptySearchText() {
+        dataModel.clear()
         view?.run {
             itemTranslatePresenter.entityList.apply {
                 clear()
@@ -79,6 +83,7 @@ class TranslatePresenter<V : ITranslateView, T : AppState>(
     }
 
     private fun onErrorLoadingDataModel(error: Throwable) {
+        dataModel.clear()
         view?.run {
             itemTranslatePresenter.entityList.apply {
                 clear()
@@ -97,7 +102,7 @@ class TranslatePresenter<V : ITranslateView, T : AppState>(
                 }
                 .subscribeBy(
                     onSuccess = {
-                        val dataModel = (it as AppState.Success).dataModel
+                        dataModel = (it as AppState.Success).dataModel
                         if (dataModel.isEmpty())
                             onEmptyDataModel()
                         else
