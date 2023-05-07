@@ -12,8 +12,13 @@ abstract class BaseTranslateActivity <T: AppState>: AppCompatActivity(), ITransl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
-        translateViewModel.getTranslateLiveData().observe(this){
-            renderData(it)
+        translateViewModel.apply {
+            getTranslateLiveData().observe(this@BaseTranslateActivity){
+                renderData(it)
+            }
+            getSingleEventLiveData().observe(this@BaseTranslateActivity){
+                renderData(it)
+            }
         }
     }
 

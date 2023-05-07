@@ -34,7 +34,6 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        hideKeyboard()
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
@@ -64,7 +63,16 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
             }
 
             is AppState.Loading -> showProgressLayout()
+
+            is AppState.EmptyData -> {
+                showEmptyData()
+                hideProgressLayout()
+            }
         }
+    }
+
+    private fun showEmptyData() {
+       translateAdapter.updateListTranslateEntity()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -74,12 +82,10 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showInfo(info: String) {
-        translateAdapter.updateListTranslateEntity()
         Snackbar.make(binding.root, info, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun showError(error: Throwable) {
-        translateAdapter.updateListTranslateEntity()
         Toast.makeText(this, error.message.toString(), Toast.LENGTH_SHORT).show()
     }
 

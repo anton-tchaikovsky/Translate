@@ -35,12 +35,16 @@ class TranslateViewModel :
 
     override fun getTranslateLiveData(): LiveData<AppState> = translateLiveData
 
+    override fun getSingleEventLiveData(): LiveData<AppState> = singleEventLiveData
+
     private fun onEmptySearchText() {
-        translateLiveData.value = AppState.Info(EMPTY_SEARCH_TEXT)
+        singleEventLiveData.value = AppState.Info(EMPTY_SEARCH_TEXT)
+        translateLiveData.value = AppState.EmptyData
     }
 
     private fun onEmptyDataModel() {
-        translateLiveData.postValue(AppState.Info(EMPTY_DATA_MODEL))
+        singleEventLiveData.postValue(AppState.Info(EMPTY_DATA_MODEL))
+        translateLiveData.postValue(AppState.EmptyData)
     }
 
     private fun onCorrectDataModel(listTranslateEntity: List<TranslateEntity>) {
@@ -48,7 +52,8 @@ class TranslateViewModel :
     }
 
     private fun onErrorLoadingDataModel(error: Throwable) {
-        translateLiveData.postValue(AppState.Error(error))
+        singleEventLiveData.postValue(AppState.Error(error))
+        translateLiveData.postValue(AppState.EmptyData)
     }
 
     private fun onLoadingDataModel() {
@@ -81,4 +86,5 @@ class TranslateViewModel :
         private const val EMPTY_DATA_MODEL = "Перевод не найден"
         private const val EMPTY_SEARCH_TEXT = "Введите слово для перевода"
     }
+
 }

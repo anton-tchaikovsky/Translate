@@ -10,4 +10,6 @@ sealed class AppState{
 
     object Loading: AppState()
 
+    object EmptyData: AppState()
+
 }

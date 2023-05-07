@@ -5,12 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.translate.model.data.AppState
 
-abstract class BaseTranslateViewModel<T: AppState>(
-   protected val translateLiveData: MutableLiveData<T> = MutableLiveData(),
-) : ViewModel() {
+abstract class BaseTranslateViewModel<T : AppState>: ViewModel() {
+
+    protected val translateLiveData = MutableLiveData<T>()
+
+    protected val singleEventLiveData = SingleEventLiveData<T>()
 
     abstract fun onSearchWord(text: String?)
 
-    abstract fun getTranslateLiveData():LiveData<T>
+    abstract fun getTranslateLiveData(): LiveData<T>
+
+    abstract fun getSingleEventLiveData(): LiveData<T>
 
 }
