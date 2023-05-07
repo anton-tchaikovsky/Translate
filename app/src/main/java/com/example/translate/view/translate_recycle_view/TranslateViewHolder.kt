@@ -5,6 +5,7 @@ import com.example.translate.databinding.ItemTranslateLayoutBinding
 
 class TranslateViewHolder (private val binding: ItemTranslateLayoutBinding):RecyclerView.ViewHolder(binding.root),
     IItemTranslateViewHolder {
+
     override fun showTextTranslate(textTranslate: String) {
         binding.textTranslateTextView.text = textTranslate
     }
@@ -16,7 +17,5 @@ class TranslateViewHolder (private val binding: ItemTranslateLayoutBinding):Recy
     override fun showTranscription(transcription: String) {
         binding.transcriptionTextView.text = transcription
     }
-
-    override var itemPosition: Int? = null
 
 }

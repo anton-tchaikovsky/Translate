@@ -1,12 +1,15 @@
 package com.example.translate.view.translate_recycle_view
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.databinding.ItemTranslateLayoutBinding
-import com.example.translate.presenter.translate_recycle_view.IItemTranslatePresenter
+import com.example.translate.model.data.TranslateEntity
 
-class TranslateAdapter (private val itemTranslatePresenter: IItemTranslatePresenter):RecyclerView.Adapter<TranslateViewHolder>() {
+class TranslateAdapter: RecyclerView.Adapter<TranslateViewHolder>() {
+
+    private var listTranslateEntity: List<TranslateEntity> = listOf()
 
     init {
         setHasStableIds(true)
@@ -17,13 +20,18 @@ class TranslateAdapter (private val itemTranslatePresenter: IItemTranslatePresen
         return TranslateViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = itemTranslatePresenter.getCount()
+    override fun getItemCount(): Int = listTranslateEntity.size
 
     override fun onBindViewHolder(holder: TranslateViewHolder, position: Int) {
-        holder.itemPosition = position
-        itemTranslatePresenter.bindView(holder)
+        holder.bind(listTranslateEntity[position])
     }
 
-    override fun getItemId(position: Int) = itemTranslatePresenter.getId(position).toLong()
+    override fun getItemId(position: Int) = listTranslateEntity[position].id.toLong()
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateListTranslateEntity(listTranslateEntity: List<TranslateEntity> = listOf()){
+        this.listTranslateEntity = listTranslateEntity
+        notifyDataSetChanged()
+    }
 
 }

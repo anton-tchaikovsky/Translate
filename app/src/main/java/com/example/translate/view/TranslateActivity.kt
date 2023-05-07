@@ -8,53 +8,48 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
-import com.example.translate.presenter.ITranslatePresenter
-import com.example.translate.presenter.TranslatePresenter
+import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.TranslateAdapter
+import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.translate.view_model.TranslateViewModel
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 
 class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     private lateinit var binding: ActivityTranslateBinding
 
     private val translateAdapter: TranslateAdapter by lazy {
-        TranslateAdapter(itemTranslatePresenter = this@TranslateActivity.translatePresenter.itemTranslatePresenter)
+        TranslateAdapter()
+    }
+
+    override val translateViewModel: BaseTranslateViewModel<AppState> by lazy {
+        ViewModelProvider(this)[TranslateViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        hideKeybooard()
+        hideKeyboard()
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
     }
 
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun onRetainCustomNonConfigurationInstance(): ITranslatePresenter<ITranslateView, AppState> {
-        return translatePresenter
-    }
-
     override fun initView() {
         initSearchTextLayout()
         hideProgressLayout()
-        initTranslateRecycleView()
+        initTranslateLayout()
     }
-
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    override fun createPresenter(): ITranslatePresenter<ITranslateView, AppState> =
-        lastCustomNonConfigurationInstance as? TranslatePresenter<ITranslateView, AppState>
-            ?: TranslatePresenter(mainThreadScheduler = AndroidSchedulers.mainThread())
 
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                showTranslate()
+                showTranslate(appState.listTranslateEntity)
                 hideProgressLayout()
             }
 
@@ -73,19 +68,18 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun showTranslate() {
-        translateAdapter.notifyDataSetChanged()
-        binding.translateLayout.root.visibility = View.VISIBLE
+    private fun showTranslate(listTranslateEntity: List<TranslateEntity>) {
+        translateAdapter.updateListTranslateEntity(listTranslateEntity)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showInfo(info: String) {
-        translateAdapter.notifyDataSetChanged()
-        binding.translateLayout.root.visibility = View.VISIBLE
+        translateAdapter.updateListTranslateEntity()
         Snackbar.make(binding.root, info, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun showError(error: Throwable) {
+        translateAdapter.updateListTranslateEntity()
         Toast.makeText(this, error.message.toString(), Toast.LENGTH_SHORT).show()
     }
 
@@ -96,6 +90,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     private fun hideProgressLayout() {
         binding.progressLayout.root.visibility = View.GONE
+        binding.translateLayout.root.visibility = View.VISIBLE
     }
 
     private fun initSearchTextLayout() {
@@ -106,8 +101,8 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     private fun initSearchTextFab() {
         binding.searchTextLayout.searchTextFab.setOnClickListener {
-            hideKeybooard()
-            translatePresenter.onSearchWord(binding.searchTextLayout.searchTextEditText.text.toString())
+            hideKeyboard()
+            translateViewModel.onSearchWord(binding.searchTextLayout.searchTextEditText.text.toString())
         }
     }
 
@@ -132,7 +127,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         }
     }
 
-    private fun initTranslateRecycleView() {
+    private fun initTranslateLayout() {
         binding.translateLayout.run {
             root.visibility = View.GONE
             translateRecyclerView.apply {
@@ -153,7 +148,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         }
     }
 
-    private fun hideKeybooard(){
+    private fun hideKeyboard(){
         currentFocus?.let{
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(it.windowToken, 0)

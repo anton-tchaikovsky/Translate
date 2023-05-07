@@ -3,21 +3,18 @@ package com.example.translate.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.translate.model.data.AppState
-import com.example.translate.presenter.ITranslatePresenter
+import com.example.translate.view_model.BaseTranslateViewModel
 
-abstract class BaseTranslateActivity <T: AppState>: AppCompatActivity(), ITranslateView {
+abstract class BaseTranslateActivity <T: AppState>: AppCompatActivity(), ITranslateView <T> {
 
-    protected val translatePresenter: ITranslatePresenter<ITranslateView, T> by lazy { createPresenter() }
-
-    abstract fun createPresenter(): ITranslatePresenter<ITranslateView, T>
+    protected abstract val translateViewModel:BaseTranslateViewModel<T>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        translatePresenter.attachView(this)
+        initView()
+        translateViewModel.getTranslateLiveData().observe(this){
+            renderData(it)
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
-        translatePresenter.detachView()
-    }
 }

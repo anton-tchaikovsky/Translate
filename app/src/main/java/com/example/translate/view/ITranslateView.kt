@@ -2,10 +2,10 @@ package com.example.translate.view
 
 import com.example.translate.model.data.AppState
 
-interface ITranslateView {
+interface ITranslateView <T: AppState>{
 
     fun initView()
 
-    fun renderData(appState: AppState)
+    fun renderData(appState: T)
 
 }

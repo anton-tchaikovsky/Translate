@@ -1,4 +1,4 @@
-package com.example.translate.presenter
+package com.example.translate.interactor
 
 import com.example.translate.model.data.AppState
 import io.reactivex.rxjava3.core.Single

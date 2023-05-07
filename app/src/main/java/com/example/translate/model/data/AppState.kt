@@ -1,10 +1,8 @@
 package com.example.translate.model.data
 
-import com.example.translate.model.data.dto.DataModel
-
 sealed class AppState{
 
-    class Success (val dataModel: DataModel = DataModel()): AppState()
+    class Success (val listTranslateEntity: List<TranslateEntity> = listOf()): AppState()
 
     class Error (val error: Throwable): AppState()
 
