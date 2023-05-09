@@ -1,26 +1,26 @@
 package com.example.translate.view_model
 
 import androidx.lifecycle.LiveData
+import com.example.translate.TranslateApp
 import com.example.translate.interactor.ITranslateInteractor
-import com.example.translate.interactor.TranslateInteractor
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
-import com.example.translate.model.data_sourse.api.RemoteDataSourse
-import com.example.translate.model.repository.Repository
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
 class TranslateViewModel :
     BaseTranslateViewModel<AppState>() {
 
-    private val interactor: ITranslateInteractor<AppState> = TranslateInteractor(
-        Repository(
-            RemoteDataSourse()
-        )
-    )
+    @Inject
+    lateinit var translteInteractor: ITranslateInteractor<AppState>
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    init {
+        TranslateApp.appComponent.inject(this)
+    }
 
     override fun onCleared() {
         compositeDisposable.clear()
@@ -62,7 +62,7 @@ class TranslateViewModel :
 
     private fun subscribeToLoadingDataModel(text: String) {
         compositeDisposable.add(
-            interactor.getDataModel(text)
+            translteInteractor.getDataModel(text)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     onLoadingDataModel()

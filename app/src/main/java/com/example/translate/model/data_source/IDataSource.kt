@@ -1,8 +1,8 @@
-package com.example.translate.model.data_sourse
+package com.example.translate.model.data_source
 
 import io.reactivex.rxjava3.core.Single
 
-interface IDataSourse <T: Any> {
+interface IDataSource <T: Any> {
 
     fun getDataModel(text: String): Single<T>
 

@@ -1,8 +1,8 @@
-package com.example.translate.model.data_sourse.api
+package com.example.translate.model.data_source.api
 
 import android.util.Log
 import com.example.translate.model.data.dto.DataModel
-import com.example.translate.model.data_sourse.IDataSourse
+import com.example.translate.model.data_source.IDataSource
 import io.reactivex.rxjava3.core.Single
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RemoteDataSourse : IDataSourse<DataModel> {
+class RemoteDataSource : IDataSource<DataModel> {
 
     private val interceptor = HttpLoggingInterceptor {
         Log.d(LOG_TAG_OK_HTTP, it)

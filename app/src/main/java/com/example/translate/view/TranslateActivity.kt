@@ -8,18 +8,18 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.R
+import com.example.translate.TranslateApp
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.TranslateAdapter
 import com.example.translate.view_model.BaseTranslateViewModel
-import com.example.translate.view_model.TranslateViewModel
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 class TranslateActivity : BaseTranslateActivity<AppState>() {
 
@@ -29,13 +29,16 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         TranslateAdapter()
     }
 
-    override val translateViewModel: BaseTranslateViewModel<AppState> by lazy {
-        ViewModelProvider(this)[TranslateViewModel::class.java]
-    }
+    @Inject
+    override lateinit var translateViewModel: BaseTranslateViewModel<AppState>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        TranslateApp.appComponent.translateActivitySubcomponentBuilder()
+            .translateActivity(this)
+            .build()
+            .inject(this)
         super.onCreate(savedInstanceState)
     }
 

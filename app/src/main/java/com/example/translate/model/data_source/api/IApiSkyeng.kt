@@ -1,4 +1,4 @@
-package com.example.translate.model.data_sourse.api
+package com.example.translate.model.data_source.api
 
 import com.example.translate.model.data.dto.DataModel
 import io.reactivex.rxjava3.core.Single
