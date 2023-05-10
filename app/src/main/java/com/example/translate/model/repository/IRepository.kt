@@ -6,4 +6,6 @@ interface IRepository <T: Any> {
 
     fun getDataModel(text: String): Single<T>
 
+    fun getConnectState():Single<Boolean>
+
 }

@@ -34,8 +34,8 @@ class TranslateViewModel @Inject constructor(private val translteInteractor: ITr
         translateLiveData.value = AppState.EmptyData
     }
 
-    private fun onEmptyDataModel() {
-        singleEventLiveData.postValue(AppState.Info(EMPTY_DATA_MODEL))
+    private fun onEmptyDataModel(info: String) {
+        singleEventLiveData.postValue(AppState.Info(info))
         translateLiveData.postValue(AppState.EmptyData)
     }
 
@@ -61,11 +61,14 @@ class TranslateViewModel @Inject constructor(private val translteInteractor: ITr
                 }
                 .subscribeBy(
                     onSuccess = {
-                        val listTranslateEntity = (it as AppState.Success).listTranslateEntity
-                        if (listTranslateEntity.isEmpty())
-                            onEmptyDataModel()
-                        else
-                            onCorrectDataModel(listTranslateEntity)
+                        if (it is AppState.Success){
+                            val listTranslateEntity = it.listTranslateEntity
+                            if (listTranslateEntity.isEmpty())
+                                onEmptyDataModel(EMPTY_DATA_MODEL)
+                            else
+                                onCorrectDataModel(listTranslateEntity)
+                        } else if (it is AppState.Info)
+                            onEmptyDataModel(it.info)
                     },
                     onError = {
                         onErrorLoadingDataModel(it)
