@@ -1,7 +1,6 @@
 package com.example.translate.view_model
 
 import androidx.lifecycle.LiveData
-import com.example.translate.TranslateApp
 import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
@@ -10,17 +9,10 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class TranslateViewModel :
+class TranslateViewModel @Inject constructor(private val translteInteractor: ITranslateInteractor<AppState>) :
     BaseTranslateViewModel<AppState>() {
 
-    @Inject
-    lateinit var translteInteractor: ITranslateInteractor<AppState>
-
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
-    init {
-        TranslateApp.appComponent.inject(this)
-    }
 
     override fun onCleared() {
         compositeDisposable.clear()
