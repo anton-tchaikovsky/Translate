@@ -1,24 +1,24 @@
 package com.example.translate.di.modules
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.translate.interactor.TranslateInteractor
-import com.example.translate.model.data.AppState
-import com.example.translate.view.BaseTranslateActivity
-import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.translate.view_model.BaseViewModelFactory
 import com.example.translate.view_model.TranslateViewModel
-import com.example.translate.view_model.TranslateViewModelFactory
+import com.example.translate.view_model.ViewModelKey
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.multibindings.IntoMap
 
-@Module
-class TranslateViewModelModule {
+@Module (includes = [TranslateInteractorModule::class])
+internal abstract class TranslateViewModelModule {
 
-    @Provides
-    fun translateViewModel(translateActivity: BaseTranslateActivity<AppState>, translateViewModelFactory: TranslateViewModelFactory):BaseTranslateViewModel<AppState> =
-        ViewModelProvider(translateActivity, translateViewModelFactory)[TranslateViewModel::class.java]
+    @Binds
+    internal abstract fun bindViewModelFactory(factory: BaseViewModelFactory):
+            ViewModelProvider.Factory
 
-    @Provides
-    fun translateViewModelFactory(translateInteractor: TranslateInteractor): TranslateViewModelFactory =
-        TranslateViewModelFactory(translateInteractor)
+    @Binds
+    @IntoMap
+    @ViewModelKey(TranslateViewModel::class)
+    abstract fun translateViewModel(translateViewModel: TranslateViewModel): ViewModel
 
 }

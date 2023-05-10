@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.TranslateAdapter
 import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.translate.view_model.TranslateViewModel
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
@@ -29,8 +31,11 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         TranslateAdapter()
     }
 
-    @Inject
+
     override lateinit var translateViewModel: BaseTranslateViewModel<AppState>
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
@@ -39,6 +44,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
             .translateActivity(this)
             .build()
             .inject(this)
+        translateViewModel = ViewModelProvider(this, viewModelFactory)[TranslateViewModel::class.java]
         super.onCreate(savedInstanceState)
     }
 

@@ -7,12 +7,10 @@ import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.repository.IRepository
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class TranslateInteractorModule {
 
-    @Singleton
     @Provides
     fun translateInteractor(repository: IRepository<DataModel>): ITranslateInteractor<AppState> =
         TranslateInteractor(repository)
