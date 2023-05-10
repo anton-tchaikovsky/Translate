@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.R
-import com.example.translate.TranslateApp
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
@@ -21,6 +20,7 @@ import com.example.translate.view.translate_recycle_view.TranslateAdapter
 import com.example.translate.view_model.BaseTranslateViewModel
 import com.example.translate.view_model.TranslateViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class TranslateActivity : BaseTranslateActivity<AppState>() {
@@ -31,7 +31,6 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         TranslateAdapter()
     }
 
-
     override lateinit var translateViewModel: BaseTranslateViewModel<AppState>
 
     @Inject
@@ -40,10 +39,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        TranslateApp.appComponent.translateActivitySubcomponentBuilder()
-            .translateActivity(this)
-            .build()
-            .inject(this)
+        AndroidInjection.inject(this)
         translateViewModel = ViewModelProvider(this, viewModelFactory)[TranslateViewModel::class.java]
         super.onCreate(savedInstanceState)
     }
