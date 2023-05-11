@@ -1,4 +1,4 @@
-package com.example.translate.view_model
+package com.example.translate.di
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

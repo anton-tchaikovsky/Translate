@@ -1,4 +1,4 @@
-package com.example.translate.view_model
+package com.example.translate.view_model.view_model_factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
