@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,8 +17,10 @@ import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.TranslateAdapter
 import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import com.google.android.material.snackbar.Snackbar
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class TranslateActivity : BaseTranslateActivity<AppState>() {
 
@@ -26,14 +29,16 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     private val translateAdapter: TranslateAdapter by lazy {
         TranslateAdapter()
     }
-    override val translateViewModel: BaseTranslateViewModel<AppState> by viewModel()
 
-//    override val translateViewModel: TranslateViewModel by viewModels {
-//        BaseSavedStateViewModelFactory(translateViewModelFactory,this)
-//    }
-//
-//    @Inject
-//    lateinit var translateViewModelFactory: TranslateViewModelFactory
+    private val translateSavedStateViewModelFactory: TranslateSavedStateViewModelFactory by inject {
+        parametersOf(
+            this
+        )
+    }
+
+    override val translateViewModel: BaseTranslateViewModel<AppState> by viewModels {
+        translateSavedStateViewModelFactory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
@@ -45,7 +50,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         initSearchTextLayout()
         hideProgressLayout()
         initTranslateLayout()
-//        translateViewModel.onInitView()
+        translateViewModel.onInitView()
     }
 
     override fun renderData(appState: AppState) {
@@ -75,7 +80,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     }
 
     private fun showEmptyData() {
-       translateAdapter.updateListTranslateEntity()
+        translateAdapter.updateListTranslateEntity()
     }
 
     private fun showTranslate(listTranslateEntity: List<TranslateEntity>) {
@@ -155,8 +160,8 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         }
     }
 
-    private fun hideKeyboard(){
-        currentFocus?.let{
+    private fun hideKeyboard() {
+        currentFocus?.let {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(it.windowToken, 0)
         }

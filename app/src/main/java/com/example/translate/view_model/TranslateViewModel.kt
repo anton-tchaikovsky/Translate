@@ -1,6 +1,7 @@
 package com.example.translate.view_model
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
@@ -10,7 +11,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 class TranslateViewModel(
     private val translteInteractor: ITranslateInteractor<AppState>,
-//    private val handle: SavedStateHandle
+    private val handle: SavedStateHandle
 ) :
     BaseTranslateViewModel<AppState>() {
 
@@ -27,35 +28,35 @@ class TranslateViewModel(
             onEmptySearchText()
     }
 
-//    override fun onInitView() {
-//        handle.get<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)?.let{
-//            translateLiveData.value = AppState.Success(it)
-//        }
-//    }
+    override fun onInitView() {
+        handle.get<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)?.let{
+            translateLiveData.value = AppState.Success(it)
+        }
+    }
 
     override fun getTranslateLiveData(): LiveData<AppState> = translateLiveData
 
     override fun getSingleEventLiveData(): LiveData<AppState> = singleEventLiveData
 
     private fun onEmptySearchText() {
-//        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         singleEventLiveData.value = AppState.Info(EMPTY_SEARCH_TEXT)
         translateLiveData.value = AppState.EmptyData
     }
 
     private fun onEmptyDataModel(info: String) {
-//        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         singleEventLiveData.postValue(AppState.Info(info))
         translateLiveData.postValue(AppState.EmptyData)
     }
 
     private fun onCorrectDataModel(listTranslateEntity: List<TranslateEntity>) {
-//        handle[KEY_HANDLE_TRANSLATE] = listTranslateEntity
+        handle[KEY_HANDLE_TRANSLATE] = listTranslateEntity
         translateLiveData.postValue(AppState.Success(listTranslateEntity))
     }
 
     private fun onErrorLoadingDataModel(error: Throwable) {
-//        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         singleEventLiveData.postValue(AppState.Error(error))
         translateLiveData.postValue(AppState.EmptyData)
     }

@@ -13,7 +13,7 @@ abstract class BaseTranslateViewModel<T : AppState>: ViewModel() {
 
     abstract fun onSearchWord(text: String?)
 
-//    abstract fun onInitView()
+    abstract fun onInitView()
 
     abstract fun getTranslateLiveData(): LiveData<T>
 

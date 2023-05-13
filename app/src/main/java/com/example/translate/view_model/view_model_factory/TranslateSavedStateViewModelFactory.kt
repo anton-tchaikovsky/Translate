@@ -5,9 +5,12 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
+import com.example.translate.interactor.ITranslateInteractor
+import com.example.translate.model.data.AppState
+import com.example.translate.view_model.TranslateViewModel
 
-class BaseSavedStateViewModelFactory<out V: ViewModel>(
-    private val viewModelFactory: IViewModelFactory<V>,
+class TranslateSavedStateViewModelFactory(
+    private val translateInteractor: ITranslateInteractor<AppState>,
     owner: SavedStateRegistryOwner,
     defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
@@ -17,6 +20,6 @@ class BaseSavedStateViewModelFactory<out V: ViewModel>(
         key: String,
         modelClass: Class<T>,
         handle: SavedStateHandle
-    ): T = viewModelFactory.create(handle) as T
+    ): T = TranslateViewModel(translateInteractor, handle) as T
 
 }
