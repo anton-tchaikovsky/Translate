@@ -19,7 +19,7 @@ class TranslateApp:Application(), HasAndroidInjector {
 
     private fun createAppComponent() =
         DaggerAppComponent.builder()
-            .application(this)
+            .applicationContext(this)
             .build()
             .inject(this)
 

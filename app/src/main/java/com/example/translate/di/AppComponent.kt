@@ -1,12 +1,11 @@
 package com.example.translate.di
 
-import android.app.Application
+import android.content.Context
 import com.example.translate.TranslateApp
 import com.example.translate.di.modules.RemoteDataSourceModule
 import com.example.translate.di.modules.RepositoryModule
 import com.example.translate.di.modules.TranslateActivityModule
 import com.example.translate.di.modules.TranslateInteractorModule
-import com.example.translate.di.modules.TranslateViewModelFactoryModule
 import com.example.translate.di.modules.TranslateViewModelModule
 import dagger.BindsInstance
 import dagger.Component
@@ -20,7 +19,6 @@ import javax.inject.Singleton
         TranslateInteractorModule::class,
         RemoteDataSourceModule::class,
         TranslateViewModelModule::class,
-        TranslateViewModelFactoryModule::class,
         TranslateActivityModule::class,
         AndroidSupportInjectionModule::class
     ]
@@ -31,7 +29,7 @@ interface AppComponent {
     interface Builder{
 
         @BindsInstance
-        fun application (application: Application): Builder
+        fun applicationContext (applicationContext: Context): Builder
 
         fun build(): AppComponent
 
