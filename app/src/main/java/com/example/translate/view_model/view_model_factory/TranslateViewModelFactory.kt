@@ -4,13 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.model.data.AppState
 import com.example.translate.view_model.TranslateViewModel
-import javax.inject.Inject
 
-class TranslateViewModelFactory @Inject constructor (
+class TranslateViewModelFactory(
     private val translteInteractor: ITranslateInteractor<AppState>
-): IViewModelFactory<TranslateViewModel> {
+) : IViewModelFactory<TranslateViewModel> {
 
     override fun create(handle: SavedStateHandle): TranslateViewModel =
-        TranslateViewModel(translteInteractor, handle)
+        TranslateViewModel(translteInteractor/*, handle*/)
 
 }

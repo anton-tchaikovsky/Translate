@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,12 +15,9 @@ import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.view.translate_recycle_view.TranslateAdapter
-import com.example.translate.view_model.TranslateViewModel
-import com.example.translate.view_model.view_model_factory.BaseSavedStateViewModelFactory
-import com.example.translate.view_model.view_model_factory.TranslateViewModelFactory
+import com.example.translate.view_model.BaseTranslateViewModel
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TranslateActivity : BaseTranslateActivity<AppState>() {
 
@@ -30,18 +26,18 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     private val translateAdapter: TranslateAdapter by lazy {
         TranslateAdapter()
     }
+    override val translateViewModel: BaseTranslateViewModel<AppState> by viewModel()
 
-    override val translateViewModel: TranslateViewModel by viewModels {
-        BaseSavedStateViewModelFactory(translateViewModelFactory,this)
-    }
-
-    @Inject
-    lateinit var translateViewModelFactory: TranslateViewModelFactory
+//    override val translateViewModel: TranslateViewModel by viewModels {
+//        BaseSavedStateViewModelFactory(translateViewModelFactory,this)
+//    }
+//
+//    @Inject
+//    lateinit var translateViewModelFactory: TranslateViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -49,7 +45,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         initSearchTextLayout()
         hideProgressLayout()
         initTranslateLayout()
-        translateViewModel.onInitView()
+//        translateViewModel.onInitView()
     }
 
     override fun renderData(appState: AppState) {
