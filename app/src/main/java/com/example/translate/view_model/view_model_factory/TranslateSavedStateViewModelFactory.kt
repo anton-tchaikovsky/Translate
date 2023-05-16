@@ -6,11 +6,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.example.translate.interactor.ITranslateInteractor
-import com.example.translate.model.data.AppState
+import com.example.translate.model.data.dto.DataModel
 import com.example.translate.view_model.TranslateViewModel
 
 class TranslateSavedStateViewModelFactory(
-    private val translateInteractor: ITranslateInteractor<AppState>,
+    private val translateInteractor: ITranslateInteractor<DataModel>,
     owner: SavedStateRegistryOwner,
     defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {

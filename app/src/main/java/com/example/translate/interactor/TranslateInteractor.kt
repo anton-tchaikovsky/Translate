@@ -1,34 +1,20 @@
 package com.example.translate.interactor
 
-import com.example.translate.model.data.AppState
+import android.net.ConnectivityManager.NetworkCallback
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.repository.IRepository
-import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
-import io.reactivex.rxjava3.core.Single
 
 class TranslateInteractor(private val repository: IRepository<DataModel>) :
-    ITranslateInteractor<AppState> {
+    ITranslateInteractor<DataModel> {
 
-    override fun getDataModel(text: String): Single<AppState> =
-        repository.getConnectState()
-            .flatMap { isConnect ->
-                if (isConnect)
-                    return@flatMap subscribeToLoadingDataModel(text)
-                else
-                    return@flatMap Single.fromCallable {
-                        return@fromCallable AppState.Info(DISCONNECT_NETWORK)
-                    }
-            }
+    override suspend fun getDataModel(text: String): DataModel = repository.getDataModel(text)
 
-    private fun subscribeToLoadingDataModel(text: String) =
-        repository.getDataModel(text).map { dataModel ->
-            AppState.Success(dataModel.map {
-                mapFromDataModelItemToTranslateEntity(it)
-            })
-        }
+    override fun registerNetworkCallback(networkCallback: NetworkCallback) {
+        repository.registerNetworkCallback(networkCallback)
+    }
 
-    companion object {
-        private const val DISCONNECT_NETWORK = "Отсутствует подключение к сети"
+    override fun unregisterNetworkCallback(networkCallback: NetworkCallback) {
+        repository.unregisterNetworkCallback(networkCallback)
     }
 
 }

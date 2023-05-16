@@ -1,11 +1,8 @@
-package com.example.translate.interactor
+package com.example.translate.model.network
 
 import android.net.ConnectivityManager.NetworkCallback
 
-interface ITranslateInteractor<T> {
-
-    suspend fun getDataModel(text: String): T
-
+interface INetworkStatus {
     fun registerNetworkCallback(networkCallback: NetworkCallback)
 
     fun unregisterNetworkCallback(networkCallback: NetworkCallback)

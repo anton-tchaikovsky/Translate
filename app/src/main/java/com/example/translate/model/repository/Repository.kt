@@ -1,19 +1,24 @@
 package com.example.translate.model.repository
 
+import android.net.ConnectivityManager.NetworkCallback
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.data_source.IDataSource
-import com.example.translate.model.network.INetWorkStatus
-import io.reactivex.rxjava3.core.Single
+import com.example.translate.model.network.INetworkStatus
 
 class Repository(
     private val dataSource: IDataSource<DataModel>,
-    private val netWorkStatus: INetWorkStatus
+    private val netWorkStatus: INetworkStatus
 ) : IRepository<DataModel> {
 
-    override fun getDataModel(text: String): Single<DataModel> =
-        dataSource.getDataModel(text)
+    override suspend fun getDataModel(text: String): DataModel =
+        dataSource.getDataModelAsync(text)
 
-    override fun getConnectState(): Single<Boolean> =
-        netWorkStatus.isConnectSingle()
+    override fun registerNetworkCallback(networkCallback: NetworkCallback) {
+        netWorkStatus.registerNetworkCallback(networkCallback)
+    }
+
+    override fun unregisterNetworkCallback(networkCallback: NetworkCallback) {
+        netWorkStatus.unregisterNetworkCallback(networkCallback)
+    }
 
 }

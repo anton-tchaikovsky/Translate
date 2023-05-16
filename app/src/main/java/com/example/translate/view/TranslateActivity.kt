@@ -2,6 +2,7 @@ package com.example.translate.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -93,6 +94,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     private fun showError(error: Throwable) {
         Toast.makeText(this, error.message.toString(), Toast.LENGTH_SHORT).show()
+        Log.d ("@@@", error.message.toString())
     }
 
     private fun showProgressLayout() {

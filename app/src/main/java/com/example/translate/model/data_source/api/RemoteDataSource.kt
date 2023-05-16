@@ -3,12 +3,11 @@ package com.example.translate.model.data_source.api
 import android.util.Log
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.data_source.IDataSource
-import io.reactivex.rxjava3.core.Single
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RemoteDataSource : IDataSource<DataModel> {
@@ -19,7 +18,7 @@ class RemoteDataSource : IDataSource<DataModel> {
         setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
-    override fun getDataModel(text: String): Single<DataModel> = getServiceApiSkyeng().search(text)
+    override suspend fun getDataModelAsync(text: String): DataModel = getServiceApiSkyeng().searchAsync(text).await()
 
     private fun getServiceApiSkyeng(): IApiSkyeng =
         createRetrofitApiSkyeng(interceptor).create(IApiSkyeng::class.java)
@@ -28,7 +27,7 @@ class RemoteDataSource : IDataSource<DataModel> {
         Retrofit.Builder()
             .baseUrl(BASE_URL_API_SKYENG)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(createOkHttpClient(intercepter))
             .build()
 

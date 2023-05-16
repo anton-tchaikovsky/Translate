@@ -1,11 +1,13 @@
 package com.example.translate.model.repository
 
-import io.reactivex.rxjava3.core.Single
+import android.net.ConnectivityManager.NetworkCallback
 
 interface IRepository <T: Any> {
 
-    fun getDataModel(text: String): Single<T>
+    suspend fun getDataModel(text: String): T
 
-    fun getConnectState():Single<Boolean>
+    fun registerNetworkCallback(networkCallback: NetworkCallback)
+
+    fun unregisterNetworkCallback(networkCallback: NetworkCallback)
 
 }
