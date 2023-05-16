@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.TranslateActivity">
+
+    <include
+        android:id="@+id/search_text_layout"
+        layout="@layout/search_text_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <include
+        android:id="@+id/progress_layout"
+        layout="@layout/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_text_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+         />
+
+    <include
+        android:id="@+id/translate_layout"
+        layout="@layout/translate_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_text_layout"
+        android:layout_marginTop="@dimen/margin_top_translate_layout"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
