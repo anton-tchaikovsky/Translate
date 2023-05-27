@@ -9,19 +9,31 @@ import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TranslateViewModel(
-    private val translteInteractor: ITranslateInteractor<DataModel>,
+    private val translateInteractor: ITranslateInteractor<DataModel>,
     private val handle: SavedStateHandle
 ) :
     BaseTranslateViewModel<AppState>() {
 
     override var isOnline: Boolean = false
 
-    private val networkCallback: NetworkCallback = object: NetworkCallback(){
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    private val querySearchInputWordStateFlow = MutableStateFlow("")
+
+    private val networkCallback: NetworkCallback = object : NetworkCallback() {
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -40,12 +52,14 @@ class TranslateViewModel(
     }
 
     init {
-        translteInteractor.registerNetworkCallback(networkCallback)
+        translateInteractor.registerNetworkCallback(networkCallback)
+        setupSearchInputWordStateFlow()
     }
 
     override fun onCleared() {
         super.onCleared()
-        translteInteractor.unregisterNetworkCallback(networkCallback)
+        translateInteractor.unregisterNetworkCallback(networkCallback)
+        scope.coroutineContext.cancelChildren()
     }
 
     override fun onSearchWord(text: String?) {
@@ -60,6 +74,12 @@ class TranslateViewModel(
                 onEmptyDataModel(DISCONNECT_NETWORK)
         } else
             onEmptySearchText()
+    }
+
+    override fun onChangingInputWord(inputWord: String?) {
+        inputWord?.let {
+            querySearchInputWordStateFlow.value = it
+        }
     }
 
     override fun onInitView() {
@@ -105,7 +125,7 @@ class TranslateViewModel(
 
     private suspend fun startLoadingDataModel(text: String) {
         withContext(Dispatchers.IO) {
-            translteInteractor.getDataModel(text).map {
+            translateInteractor.getDataModel(text).map {
                 mapFromDataModelItemToTranslateEntity(it)
             }.also {
                 if (it.isEmpty())
@@ -116,11 +136,45 @@ class TranslateViewModel(
         }
     }
 
+    private suspend fun startLoadingInputWord(inputWord: String) {
+        withContext(Dispatchers.IO) {
+            translateInteractor.getDataModel(inputWord).map {
+                mapFromDataModelItemToTranslateEntity(it)
+            }.also {translateEntity ->
+                if(isOnline){
+                    translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
+                }
+            }
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun setupSearchInputWordStateFlow() {
+        scope.launch {
+            querySearchInputWordStateFlow
+                .debounce(STATE_FLOW_TIMEOUT)
+                .filter {
+                    if (it.isEmpty()){
+                        translateLiveData.postValue(AppState.InputWords(listOf()))
+                        return@filter false
+                    } else {
+                        return@filter true
+                    }
+                }
+                .distinctUntilChanged()
+                .collectLatest{
+                    viewModelCoroutineScope.launch {
+                        startLoadingInputWord(it)
+                    }
+                }
+        }
+    }
+
     companion object {
         private const val EMPTY_DATA_MODEL = "Перевод не найден"
         private const val EMPTY_SEARCH_TEXT = "Введите слово для перевода"
         private const val KEY_HANDLE_TRANSLATE = "KeyHandleTranslate"
         private const val DISCONNECT_NETWORK = "Отсутствует подключение к сети"
+        private const val STATE_FLOW_TIMEOUT = 500L
     }
-
 }

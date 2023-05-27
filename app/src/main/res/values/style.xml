@@ -18,6 +18,11 @@
         <item name="android:textAppearance">@style/TextAppearance.Material3.BodyMedium</item>
     </style>
 
+    <style name="InputWordText" parent = "Widget.AppCompat.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleLarge</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
     <style name="SearchFloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
         <item name="tint">@color/black</item>
     </style>

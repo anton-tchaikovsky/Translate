@@ -2,7 +2,6 @@ package com.example.translate.view
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -16,7 +15,8 @@ import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
-import com.example.translate.view.translate_recycle_view.TranslateAdapter
+import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
+import com.example.translate.view.recycle_view.translate_recycle_view.TranslateAdapter
 import com.example.translate.view_model.BaseTranslateViewModel
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -30,6 +30,14 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     private val translateAdapter: TranslateAdapter by lazy {
         TranslateAdapter()
     }
+
+    private val inputWordsAdapter: InputWordAdapter by lazy {
+        InputWordAdapter {
+            selectingInputWord(it)
+        }
+    }
+
+    private var isSelectedInputWord = false
 
     private val translateSavedStateViewModelFactory: TranslateSavedStateViewModelFactory by inject {
         parametersOf(
@@ -77,7 +85,15 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
                 showEmptyData()
                 hideProgressLayout()
             }
+
+            is AppState.InputWords -> {
+                showInputWords(appState.listInputWords)
+            }
         }
+    }
+
+    private fun showInputWords(listInputWord: List<String>) {
+        inputWordsAdapter.updateListInputWord(listInputWord)
     }
 
     private fun showEmptyData() {
@@ -94,7 +110,6 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
 
     private fun showError(error: Throwable) {
         Toast.makeText(this, error.message.toString(), Toast.LENGTH_SHORT).show()
-        Log.d ("@@@", error.message.toString())
     }
 
     private fun showProgressLayout() {
@@ -111,11 +126,13 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         initClearSearchTextImageView()
         initSearchTextEditText()
         initSearchTextFab()
+        initInputWordRecyclerView()
     }
 
     private fun initSearchTextFab() {
         binding.searchTextLayout.searchTextFab.setOnClickListener {
             hideKeyboard()
+            inputWordsAdapter.updateListInputWord(listOf())
             translateViewModel.onSearchWord(binding.searchTextLayout.searchTextEditText.text.toString())
         }
     }
@@ -123,6 +140,9 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     private fun initSearchTextEditText() {
         binding.searchTextLayout.run {
             searchTextEditText.doOnTextChanged { text, _, _, _ ->
+                if (!isSelectedInputWord)
+                    translateViewModel.onChangingInputWord(text.toString())
+                isSelectedInputWord = false
                 if (text.isNullOrEmpty())
                     clearSearchTextImageView.visibility = View.GONE
                 else
@@ -137,28 +157,38 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
             setOnClickListener {
                 binding.searchTextLayout.searchTextEditText.text?.clear()
                 it.visibility = View.GONE
+                translateViewModel.onChangingInputWord("")
             }
         }
     }
 
+    private fun initInputWordRecyclerView(){
+        binding.searchTextLayout.inputWordsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
+            adapter = inputWordsAdapter
+        }
+    }
+
     private fun initTranslateLayout() {
-        binding.translateLayout.run {
-            root.visibility = View.GONE
-            translateRecyclerView.apply {
-                layoutManager =
-                    LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
-                adapter = translateAdapter
-                addItemDecoration(
-                    DividerItemDecoration(
-                        this@TranslateActivity,
-                        LinearLayoutManager.VERTICAL
-                    ).also {
-                        ContextCompat.getDrawable(context, R.drawable.divider_item_recycle_view)
-                            ?.let { drawable ->
-                                it.setDrawable(drawable)
-                            }
-                    })
-            }
+        binding.translateLayout.root.visibility = View.GONE
+        initTranslateRecyclerView()
+    }
+
+    private fun initTranslateRecyclerView() {
+        binding.translateLayout.translateRecyclerView.apply {
+            layoutManager =
+                LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
+            adapter = translateAdapter
+            addItemDecoration(
+                DividerItemDecoration(
+                    this@TranslateActivity,
+                    LinearLayoutManager.VERTICAL
+                ).also {
+                    ContextCompat.getDrawable(context, R.drawable.divider_item_recycle_view)
+                        ?.let { drawable ->
+                            it.setDrawable(drawable)
+                        }
+                })
         }
     }
 
@@ -167,6 +197,12 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+
+    private fun selectingInputWord(inputWord: String){
+        isSelectedInputWord = true
+        binding.searchTextLayout.searchTextEditText.setText(inputWord)
+        inputWordsAdapter.updateListInputWord(listOf())
     }
 
 }

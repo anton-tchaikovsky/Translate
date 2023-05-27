@@ -36,6 +36,8 @@ abstract class BaseTranslateViewModel<T : AppState>: ViewModel() {
 
     abstract fun onSearchWord(text: String?)
 
+    abstract fun onChangingInputWord(inputWord: String?)
+
     abstract fun onInitView()
 
     abstract fun getTranslateLiveData(): LiveData<T>
