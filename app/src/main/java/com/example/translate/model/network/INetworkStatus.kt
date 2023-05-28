@@ -1,10 +1,11 @@
 package com.example.translate.model.network
 
-import android.net.ConnectivityManager.NetworkCallback
+import kotlinx.coroutines.flow.StateFlow
 
 interface INetworkStatus {
-    fun registerNetworkCallback(networkCallback: NetworkCallback)
 
-    fun unregisterNetworkCallback(networkCallback: NetworkCallback)
+    fun registerNetworkCallback():StateFlow<Boolean>
+
+    fun unregisterNetworkCallback()
 
 }

@@ -1,9 +1,9 @@
 package com.example.translate.model.repository
 
-import android.net.ConnectivityManager.NetworkCallback
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.data_source.IDataSource
 import com.example.translate.model.network.INetworkStatus
+import kotlinx.coroutines.flow.StateFlow
 
 class Repository(
     private val dataSource: IDataSource<DataModel>,
@@ -13,12 +13,11 @@ class Repository(
     override suspend fun getDataModel(text: String): DataModel =
         dataSource.getDataModelAsync(text)
 
-    override fun registerNetworkCallback(networkCallback: NetworkCallback) {
-        netWorkStatus.registerNetworkCallback(networkCallback)
-    }
+    override fun registerNetworkCallback(): StateFlow<Boolean> =
+        netWorkStatus.registerNetworkCallback()
 
-    override fun unregisterNetworkCallback(networkCallback: NetworkCallback) {
-        netWorkStatus.unregisterNetworkCallback(networkCallback)
+    override fun unregisterNetworkCallback() {
+        netWorkStatus.unregisterNetworkCallback()
     }
 
 }

@@ -1,13 +1,13 @@
 package com.example.translate.model.repository
 
-import android.net.ConnectivityManager.NetworkCallback
+import kotlinx.coroutines.flow.StateFlow
 
 interface IRepository <T: Any> {
 
     suspend fun getDataModel(text: String): T
 
-    fun registerNetworkCallback(networkCallback: NetworkCallback)
+    fun registerNetworkCallback(): StateFlow<Boolean>
 
-    fun unregisterNetworkCallback(networkCallback: NetworkCallback)
+    fun unregisterNetworkCallback()
 
 }

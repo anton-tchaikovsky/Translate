@@ -1,7 +1,5 @@
 package com.example.translate.view_model
 
-import android.net.ConnectivityManager.NetworkCallback
-import android.net.Network
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.translate.interactor.ITranslateInteractor
@@ -9,10 +7,8 @@ import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -29,37 +25,16 @@ class TranslateViewModel(
 
     override var isOnline: Boolean = false
 
-    private val scope = CoroutineScope(Dispatchers.IO)
-
     private val querySearchInputWordStateFlow = MutableStateFlow("")
 
-    private val networkCallback: NetworkCallback = object : NetworkCallback() {
-
-        override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            isOnline = true
-        }
-
-        override fun onUnavailable() {
-            super.onUnavailable()
-            isOnline = false
-        }
-
-        override fun onLost(network: Network) {
-            super.onLost(network)
-            isOnline = false
-        }
-    }
-
     init {
-        translateInteractor.registerNetworkCallback(networkCallback)
+        setupGettingNetworkState()
         setupSearchInputWordStateFlow()
     }
 
     override fun onCleared() {
         super.onCleared()
-        translateInteractor.unregisterNetworkCallback(networkCallback)
-        scope.coroutineContext.cancelChildren()
+        translateInteractor.unregisterNetworkCallback()
     }
 
     override fun onSearchWord(text: String?) {
@@ -140,8 +115,8 @@ class TranslateViewModel(
         withContext(Dispatchers.IO) {
             translateInteractor.getDataModel(inputWord).map {
                 mapFromDataModelItemToTranslateEntity(it)
-            }.also {translateEntity ->
-                if(isOnline){
+            }.also { translateEntity ->
+                if (isOnline) {
                     translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
                 }
             }
@@ -150,11 +125,11 @@ class TranslateViewModel(
 
     @OptIn(FlowPreview::class)
     private fun setupSearchInputWordStateFlow() {
-        scope.launch {
+        viewModelCoroutineScope.launch {
             querySearchInputWordStateFlow
                 .debounce(STATE_FLOW_TIMEOUT)
                 .filter {
-                    if (it.isEmpty()){
+                    if (it.isEmpty()) {
                         translateLiveData.postValue(AppState.InputWords(listOf()))
                         return@filter false
                     } else {
@@ -162,11 +137,25 @@ class TranslateViewModel(
                     }
                 }
                 .distinctUntilChanged()
-                .collectLatest{
+                .collectLatest {
                     viewModelCoroutineScope.launch {
-                        startLoadingInputWord(it)
+                        if (isOnline)
+                            startLoadingInputWord(it)
+                        else
+                            translateLiveData.postValue(AppState.InputWords(listOf()))
                     }
                 }
+        }
+    }
+
+    private fun setupGettingNetworkState() {
+        viewModelCoroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                translateInteractor.registerNetworkCallback()
+                    .collect {
+                        isOnline = it
+                    }
+            }
         }
     }
 

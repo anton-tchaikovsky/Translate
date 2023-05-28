@@ -1,13 +1,13 @@
 package com.example.translate.interactor
 
-import android.net.ConnectivityManager.NetworkCallback
+import kotlinx.coroutines.flow.StateFlow
 
 interface ITranslateInteractor<T> {
 
     suspend fun getDataModel(text: String): T
 
-    fun registerNetworkCallback(networkCallback: NetworkCallback)
+    fun registerNetworkCallback(): StateFlow<Boolean>
 
-    fun unregisterNetworkCallback(networkCallback: NetworkCallback)
+    fun unregisterNetworkCallback()
 
 }
