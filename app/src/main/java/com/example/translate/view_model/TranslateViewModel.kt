@@ -9,11 +9,13 @@ import com.example.translate.model.data.dto.DataModel
 import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -27,6 +29,8 @@ class TranslateViewModel(
 
     private val querySearchInputWordStateFlow = MutableStateFlow("")
 
+    private var searchJob: Job? = null
+
     init {
         setupGettingNetworkState()
         setupSearchInputWordStateFlow()
@@ -38,11 +42,11 @@ class TranslateViewModel(
     }
 
     override fun onSearchWord(text: String?) {
-        cancelJob()
+        searchJob?.cancel()
         if (!text.isNullOrEmpty()) {
             if (isOnline) {
                 onLoadingDataModel()
-                viewModelCoroutineScope.launch {
+                searchJob = viewModelCoroutineScope.launch {
                     startLoadingDataModel(text)
                 }
             } else
@@ -99,29 +103,27 @@ class TranslateViewModel(
     }
 
     private suspend fun startLoadingDataModel(text: String) {
-        withContext(Dispatchers.IO) {
-            translateInteractor.getDataModel(text).map {
-                mapFromDataModelItemToTranslateEntity(it)
-            }.also {
+        translateInteractor.getDataModel(text)
+            .map { dataModel ->
+                dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
+            }
+            .collect {
                 if (it.isEmpty())
                     onEmptyDataModel(EMPTY_DATA_MODEL)
                 else
                     onCorrectDataModel(it)
             }
-        }
     }
 
     private suspend fun startLoadingInputWord(inputWord: String) {
-        withContext(Dispatchers.IO) {
-            translateInteractor.getDataModel(inputWord).map {
-                mapFromDataModelItemToTranslateEntity(it)
-            }.also { translateEntity ->
-                if (isOnline) {
-                    translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
-                }
+        translateInteractor.getDataModel(inputWord)
+            .map { dataModel ->
+                dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
+            }
+            .collect {translateEntity ->
+                translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
             }
         }
-    }
 
     @OptIn(FlowPreview::class)
     private fun setupSearchInputWordStateFlow() {

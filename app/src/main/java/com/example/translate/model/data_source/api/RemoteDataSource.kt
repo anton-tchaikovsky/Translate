@@ -4,6 +4,10 @@ import android.util.Log
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.data_source.IDataSource
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,7 +22,9 @@ class RemoteDataSource : IDataSource<DataModel> {
         setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
-    override suspend fun getDataModelAsync(text: String): DataModel = getServiceApiSkyeng().searchAsync(text).await()
+    override suspend fun getDataModel(text: String): Flow<DataModel> = flow {
+        emit(getServiceApiSkyeng().search(text))
+    }.flowOn(Dispatchers.IO)
 
     private fun getServiceApiSkyeng(): IApiSkyeng =
         createRetrofitApiSkyeng(interceptor).create(IApiSkyeng::class.java)

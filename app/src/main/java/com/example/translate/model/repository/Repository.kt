@@ -10,8 +10,8 @@ class Repository(
     private val netWorkStatus: INetworkStatus
 ) : IRepository<DataModel> {
 
-    override suspend fun getDataModel(text: String): DataModel =
-        dataSource.getDataModelAsync(text)
+    override suspend fun getDataModel(text: String) =
+        dataSource.getDataModel(text)
 
     override fun registerNetworkCallback(): StateFlow<Boolean> =
         netWorkStatus.registerNetworkCallback()

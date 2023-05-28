@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 class TranslateInteractor(private val repository: IRepository<DataModel>) :
     ITranslateInteractor<DataModel> {
 
-    override suspend fun getDataModel(text: String): DataModel = repository.getDataModel(text)
+    override suspend fun getDataModel(text: String) = repository.getDataModel(text)
 
     override fun registerNetworkCallback(): StateFlow<Boolean> =
         repository.registerNetworkCallback()
