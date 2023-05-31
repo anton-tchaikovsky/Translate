@@ -1,4 +1,4 @@
-package com.example.translate.view
+package com.example.translate.view.translate
 
 import com.example.translate.model.data.AppState
 

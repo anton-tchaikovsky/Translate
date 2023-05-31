@@ -6,7 +6,7 @@ import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.dto.DataModel
-import com.example.translate.unit.mapFromDataModelItemToTranslateEntity
+import com.example.translate.utils.mapFromDataModelItemToTranslateEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -31,6 +31,10 @@ class TranslateViewModel(
 
     private var searchJob: Job? = null
 
+    private var searchInputWordJob: Job? = null
+
+    private var loadingInputWordJob: Job? = null
+
     init {
         setupGettingNetworkState()
         setupSearchInputWordStateFlow()
@@ -43,6 +47,8 @@ class TranslateViewModel(
 
     override fun onSearchWord(text: String?) {
         searchJob?.cancel()
+        searchInputWordJob?.cancel()
+        loadingInputWordJob?.cancel()
         if (!text.isNullOrEmpty()) {
             if (isOnline) {
                 onLoadingDataModel()
@@ -56,6 +62,10 @@ class TranslateViewModel(
     }
 
     override fun onChangingInputWord(inputWord: String?) {
+        searchInputWordJob?.let {
+            if (it.isCancelled)
+                setupSearchInputWordStateFlow()
+        }
         inputWord?.let {
             querySearchInputWordStateFlow.value = it
         }
@@ -127,7 +137,7 @@ class TranslateViewModel(
 
     @OptIn(FlowPreview::class)
     private fun setupSearchInputWordStateFlow() {
-        viewModelCoroutineScope.launch {
+        searchInputWordJob = viewModelCoroutineScope.launch {
             querySearchInputWordStateFlow
                 .debounce(STATE_FLOW_TIMEOUT)
                 .filter {
@@ -140,7 +150,7 @@ class TranslateViewModel(
                 }
                 .distinctUntilChanged()
                 .collectLatest {
-                    viewModelCoroutineScope.launch {
+                    loadingInputWordJob = viewModelCoroutineScope.launch {
                         if (isOnline)
                             startLoadingInputWord(it)
                         else

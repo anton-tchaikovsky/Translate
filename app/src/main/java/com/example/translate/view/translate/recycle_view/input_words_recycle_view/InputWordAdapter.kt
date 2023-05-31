@@ -1,4 +1,4 @@
-package com.example.translate.view.recycle_view.input_words_recycle_view
+package com.example.translate.view.translate.recycle_view.input_words_recycle_view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.databinding.ItemInputWordLayoutBinding
 
-class InputWordAdapter (private val inputWordTextViewClickListener: (String) -> Unit) : RecyclerView.Adapter<InputWordsViewHolder>() {
+class InputWordAdapter(private val inputWordTextViewClickListener: (String) -> Unit) :
+    RecyclerView.Adapter<InputWordsViewHolder>() {
 
     private var listInputWord: List<String> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InputWordsViewHolder {
-        val binding = ItemInputWordLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemInputWordLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return InputWordsViewHolder(binding, inputWordTextViewClickListener)
     }
 
@@ -22,7 +24,7 @@ class InputWordAdapter (private val inputWordTextViewClickListener: (String) -> 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateListInputWord(listInputWord: List<String> = listOf()){
+    fun updateListInputWord(listInputWord: List<String> = listOf()) {
         this.listInputWord = listInputWord
         notifyDataSetChanged()
     }

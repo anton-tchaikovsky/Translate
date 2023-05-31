@@ -1,4 +1,4 @@
-package com.example.translate.view.recycle_view.input_words_recycle_view
+package com.example.translate.view.translate.recycle_view.input_words_recycle_view
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.databinding.ItemInputWordLayoutBinding

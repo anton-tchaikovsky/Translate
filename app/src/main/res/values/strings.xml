@@ -4,4 +4,5 @@
     <string name="hint_input_text">Введите текст </string>
     <string name="helper_input_text">Введите текст для перевода</string>
     <string name="hint_input_search_text">Нажмите, чтобы ввести текст</string>
+    <string name="click_for_open_foto">Нажмите, чтобы открыть изображение</string>
 </resources>

@@ -18,10 +18,12 @@
             app:layout_constraintGuide_percent="0.5"/>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/text_nested_scroll_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/margin_end_container_text_text_view"
             app:layout_constraintBottom_toTopOf="@+id/horizontal_guide_line"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/open_foto_image_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -36,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    tools:text="text"/>
+                    tools:text="text" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/transcription_text_view"
@@ -44,7 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    tools:text="transcription"/>
+                    tools:text="transcription" />
 
             </LinearLayout>
 
@@ -54,7 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/text_nested_scroll_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/horizontal_guide_line">
 
@@ -64,9 +66,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|top"
-                tools:text="translate"/>
+                tools:text="translate" />
 
         </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/open_foto_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/click_for_open_foto"
+            android:src="@drawable/baseline_image_24"
+            android:alpha="0.75"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            android:focusable="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

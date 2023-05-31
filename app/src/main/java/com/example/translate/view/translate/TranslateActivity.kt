@@ -1,4 +1,4 @@
-package com.example.translate.view
+package com.example.translate.view.translate
 
 import android.content.Context
 import android.os.Bundle
@@ -15,8 +15,9 @@ import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
-import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
-import com.example.translate.view.recycle_view.translate_recycle_view.TranslateAdapter
+import com.example.translate.view.translate.recycle_view.input_words_recycle_view.InputWordAdapter
+import com.example.translate.view.translate.recycle_view.translate_recycle_view.TranslateAdapter
+import com.example.translate.view.translate_foto.TranslateFotoActivity
 import com.example.translate.view_model.BaseTranslateViewModel
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -28,7 +29,8 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
     private lateinit var binding: ActivityTranslateBinding
 
     private val translateAdapter: TranslateAdapter by lazy {
-        TranslateAdapter()
+        TranslateAdapter {
+            openTranslatePhoto(it) }
     }
 
     private val inputWordsAdapter: InputWordAdapter by lazy {
@@ -203,6 +205,10 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         isSelectedInputWord = true
         binding.searchTextLayout.searchTextEditText.setText(inputWord)
         inputWordsAdapter.updateListInputWord(listOf())
+    }
+
+    private fun openTranslatePhoto(imageUrl: String) {
+        startActivity(TranslateFotoActivity.getIntent(this, imageUrl))
     }
 
 }

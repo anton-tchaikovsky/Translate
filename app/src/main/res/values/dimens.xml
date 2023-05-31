@@ -13,5 +13,11 @@
     <!--    item_translate_layout-->
     <dimen name="height_translate_card_view">144dp</dimen>
     <dimen name="padding_container_translate_card_view">8dp</dimen>
+    <dimen name="margin_end_container_text_text_view">8dp</dimen>
+
+    <!--    activity_translate_foto-->
+    <dimen name="padding_swipe_refresh_layout">8dp</dimen>
+    <dimen name="min_height_image_view">96dp</dimen>
+    <dimen name="min_widht_image_view">96dp</dimen>
 
 </resources>

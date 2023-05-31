@@ -30,7 +30,7 @@ abstract class BaseTranslateViewModel<T : AppState>: ViewModel() {
         cancelJob()
     }
 
-    protected fun cancelJob(){
+    private fun cancelJob(){
         viewModelCoroutineScope.coroutineContext.cancelChildren()
     }
 
@@ -45,6 +45,5 @@ abstract class BaseTranslateViewModel<T : AppState>: ViewModel() {
     abstract fun getSingleEventLiveData(): LiveData<T>
 
     abstract fun handleError (error: Throwable)
-
 
 }

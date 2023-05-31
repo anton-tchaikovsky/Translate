@@ -1,11 +1,11 @@
-package com.example.translate.view
+package com.example.translate.view.translate
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.translate.model.data.AppState
 import com.example.translate.view_model.BaseTranslateViewModel
 
-abstract class BaseTranslateActivity <T: AppState>: AppCompatActivity(), ITranslateView <T> {
+abstract class BaseTranslateActivity <T: AppState>: AppCompatActivity(), ITranslateView<T> {
 
     protected abstract val translateViewModel:BaseTranslateViewModel<T>
 

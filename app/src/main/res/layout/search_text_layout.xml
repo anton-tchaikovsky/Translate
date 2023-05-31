@@ -11,7 +11,7 @@
         android:padding="@dimen/padding_container_search_card_view">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
+            android:id="@+id/search_text_nested_scroll_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_end_container_search_text_edit_text"
@@ -34,9 +34,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/nestedScrollView"
+            app:layout_constraintEnd_toEndOf="@+id/search_text_nested_scroll_view"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nestedScrollView" />
+            app:layout_constraintTop_toBottomOf="@+id/search_text_nested_scroll_view" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/clear_search_text_image_view"

@@ -1,6 +1,8 @@
 package com.example.translate.di_koin
 
 import androidx.savedstate.SavedStateRegistryOwner
+import com.example.translate.image_loader.IImageLoader
+import com.example.translate.image_loader.PicassoImageLoader
 import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.interactor.TranslateInteractor
 import com.example.translate.model.data.dto.DataModel
@@ -32,5 +34,11 @@ val translateModule = module {
     }
     factory { (owner: SavedStateRegistryOwner) ->
         TranslateSavedStateViewModelFactory(translateInteractor = get(), owner = owner)
+    }
+}
+
+val imageLoaderModule = module {
+    single <IImageLoader> {
+        PicassoImageLoader(context = androidApplication())
     }
 }

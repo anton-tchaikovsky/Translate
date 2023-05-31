@@ -7,5 +7,6 @@ data class TranslateEntity(
     val id: Int,
     val text: String,
     val transcription: String,
-    val textTranslation: String
+    val textTranslation: String,
+    val imageUrl: String
 ): Parcelable

@@ -1,6 +1,7 @@
 package com.example.translate
 
 import android.app.Application
+import com.example.translate.di_koin.imageLoaderModule
 import com.example.translate.di_koin.repositoryModule
 import com.example.translate.di_koin.translateModule
 import org.koin.android.ext.koin.androidContext
@@ -12,7 +13,7 @@ class TranslateApp:Application() {
         super.onCreate()
         startKoin {
             androidContext(this@TranslateApp)
-            modules(listOf(translateModule, repositoryModule))
+            modules(listOf(translateModule, repositoryModule, imageLoaderModule))
         }
     }
 
