@@ -7,6 +7,7 @@ import com.example.translate.model.data.app_state.AppState
 import com.example.translate.model.data.dto.DataModel
 import com.example.translate.model.room.RoomTranslateEntity
 import com.example.translate.utils.mapFromDataModelItemToTranslateEntity
+import com.example.translate.utils.mapFromRoomTranslateEntityToTranslateEntity
 import com.example.translate.utils.mapFromTranslateEntityToRoomTranslateEntity
 import com.example.translate.view_model.BaseTranslateViewModel
 import kotlinx.coroutines.Dispatchers
@@ -52,13 +53,10 @@ class TranslateViewModel(
         searchInputWordJob?.cancel()
         loadingInputWordJob?.cancel()
         if (!text.isNullOrEmpty()) {
-            if (isOnline) {
-                onLoadingData()
-                searchJob = viewModelCoroutineScope.launch {
-                    startLoadingData(text)
-                }
-            } else
-                onEmptyData(DISCONNECT_NETWORK)
+            onLoadingData()
+            searchJob = viewModelCoroutineScope.launch {
+                startLoadingData(text)
+            }
         } else
             onEmptySearchText()
     }
@@ -114,26 +112,57 @@ class TranslateViewModel(
     }
 
     private suspend fun startLoadingData(text: String) {
+        if (isOnline)
+            startLoadingDataFromRemoteDataSourse(text)
+        else
+            startLoadingDataFromLocalDataSourse(text)
+    }
+
+    private suspend fun startLoadingDataFromLocalDataSourse(text: String) {
+        withContext(Dispatchers.IO) {
+            translateInteractor.readListRoomTranslateEntity(text).map {
+                mapFromRoomTranslateEntityToTranslateEntity(it)
+            }.let {
+                if (it.isEmpty())
+                    onEmptyData(EMPTY_DATA_FROM_LOCAL_DATA_SOURCE)
+                else
+                    onCorrectData(it)
+            }
+        }
+    }
+
+    private suspend fun startLoadingDataFromRemoteDataSourse(text: String) {
         translateInteractor.getDataModel(text)
             .map { dataModel ->
                 dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
             }
             .collect {
                 if (it.isEmpty())
-                    onEmptyData(EMPTY_DATA_MODEL)
+                    onEmptyData(EMPTY_DATA_FROM_REMOTE_DATA_SOURCE)
                 else
                     onCorrectData(it)
             }
     }
 
-    private suspend fun startLoadingInputWord(inputWord: String) {
+
+    private suspend fun startLoadingInputWordFromRemoteDataSource(inputWord: String) {
         translateInteractor.getDataModel(inputWord)
             .map { dataModel ->
                 dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
             }
-            .collect { translateEntity ->
-                translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
+            .collect { listTranslateEntity ->
+                translateLiveData.postValue(AppState.InputWords(listTranslateEntity.map { it.text }))
             }
+    }
+
+    private suspend fun startLoadingInputWordFromLocalDataSource(inputWord: String) {
+        withContext(Dispatchers.IO) {
+            translateInteractor.readListRoomTranslateEntity(inputWord).map {
+                mapFromRoomTranslateEntityToTranslateEntity(it)
+            }.let {listTranslateEntity ->
+                translateLiveData.postValue(AppState.InputWords(listTranslateEntity.map { it.text }))
+            }
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -153,9 +182,9 @@ class TranslateViewModel(
                 .collectLatest {
                     loadingInputWordJob = viewModelCoroutineScope.launch {
                         if (isOnline)
-                            startLoadingInputWord(it)
+                            startLoadingInputWordFromRemoteDataSource(it)
                         else
-                            translateLiveData.postValue(AppState.InputWords(listOf()))
+                            startLoadingInputWordFromLocalDataSource(it)
                     }
                 }
         }
@@ -174,9 +203,10 @@ class TranslateViewModel(
 
     companion object {
         private const val EMPTY_SEARCH_TEXT = "Введите слово для перевода"
-        private const val EMPTY_DATA_MODEL = "Перевод не найден"
+        private const val EMPTY_DATA_FROM_REMOTE_DATA_SOURCE = "Перевод не найден"
+        private const val EMPTY_DATA_FROM_LOCAL_DATA_SOURCE =
+            "Перевод не найден. Подключите интернет и повторите попытку поиска"
         private const val KEY_HANDLE_TRANSLATE = "KeyHandleTranslate"
-        private const val DISCONNECT_NETWORK = "Отсутствует подключение к сети"
         private const val STATE_FLOW_TIMEOUT = 500L
     }
 }

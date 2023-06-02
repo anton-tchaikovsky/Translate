@@ -21,7 +21,10 @@ interface RoomTranslateDAO {
     @Query("SELECT*FROM translate_table WHERE eng_text = :text")
     fun readRoomTranslateEntity(text: String): RoomTranslateEntity?
 
-    @Query("SELECT*FROM translate_table")
+    @Query("SELECT*FROM translate_table WHERE lower (eng_text) BETWEEN :text AND :text || 'zz'  ORDER BY lower(eng_text)")
+    fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity>
+
+    @Query("SELECT*FROM translate_table ORDER BY lower(eng_text)")
     fun readListRoomTranslateEntity(): List<RoomTranslateEntity>
 
     @Query("DELETE FROM translate_table WHERE id = :id")

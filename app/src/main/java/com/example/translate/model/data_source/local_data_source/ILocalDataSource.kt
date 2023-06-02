@@ -8,4 +8,6 @@ interface ILocalDataSource {
 
     fun readListRoomTranslateEntity(): List<RoomTranslateEntity>
 
+    fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity>
+
 }

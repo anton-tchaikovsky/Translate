@@ -29,7 +29,7 @@ class TranslateHistoryViewModel(
                 mapFromRoomTranslateEntityToTranslateEntity(it)
             }.let{
                 if (it.isEmpty())
-                    onEmptyData(EMPTY_DATA_MODEL)
+                    onEmptyData(EMPTY_DATA)
                 else
                     onCorrectData(it)
             }
@@ -37,7 +37,7 @@ class TranslateHistoryViewModel(
     }
 
     companion object {
-        private const val EMPTY_DATA_MODEL = "История запросов пуста"
+        private const val EMPTY_DATA = "История запросов пуста"
     }
 
 }

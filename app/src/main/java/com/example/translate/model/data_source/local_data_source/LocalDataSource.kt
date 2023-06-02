@@ -12,4 +12,7 @@ class LocalDataSource (private val roomTranslateDAO: RoomTranslateDAO):ILocalDat
     override fun readListRoomTranslateEntity(): List<RoomTranslateEntity> =
         roomTranslateDAO.readListRoomTranslateEntity()
 
+    override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
+        roomTranslateDAO.readListRoomTranslateEntity(text)
+
 }

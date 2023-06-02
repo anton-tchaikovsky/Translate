@@ -16,4 +16,6 @@ interface ITranslateInteractor<T> {
 
     fun readListRoomTranslateEntity(): List<RoomTranslateEntity>
 
+    fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity>
+
 }

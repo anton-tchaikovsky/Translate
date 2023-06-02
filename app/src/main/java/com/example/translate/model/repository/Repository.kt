@@ -30,4 +30,7 @@ class Repository(
     override fun readListRoomTranslateEntity(): List<RoomTranslateEntity> =
        localDataSource.readListRoomTranslateEntity()
 
+    override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
+        localDataSource.readListRoomTranslateEntity(text)
+
 }

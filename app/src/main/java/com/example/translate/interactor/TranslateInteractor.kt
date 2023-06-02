@@ -24,4 +24,7 @@ class TranslateInteractor(private val repository: IRepository<DataModel>) :
     override fun readListRoomTranslateEntity(): List<RoomTranslateEntity> =
         repository.readListRoomTranslateEntity()
 
+    override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
+        repository.readListRoomTranslateEntity(text)
+
 }
