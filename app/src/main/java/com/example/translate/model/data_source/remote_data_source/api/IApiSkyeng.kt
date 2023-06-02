@@ -1,4 +1,4 @@
-package com.example.translate.model.data_source.api
+package com.example.translate.model.data_source.remote_data_source.api
 
 import com.example.translate.model.data.dto.DataModel
 import retrofit2.http.GET

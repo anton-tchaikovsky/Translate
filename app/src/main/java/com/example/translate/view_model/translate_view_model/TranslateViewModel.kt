@@ -1,12 +1,14 @@
-package com.example.translate.view_model
+package com.example.translate.view_model.translate_view_model
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.translate.interactor.ITranslateInteractor
-import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
+import com.example.translate.model.data.app_state.AppState
 import com.example.translate.model.data.dto.DataModel
+import com.example.translate.model.room.RoomTranslateEntity
 import com.example.translate.utils.mapFromDataModelItemToTranslateEntity
+import com.example.translate.utils.mapFromTranslateEntityToRoomTranslateEntity
+import com.example.translate.view_model.BaseTranslateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -22,8 +24,8 @@ import kotlinx.coroutines.withContext
 class TranslateViewModel(
     private val translateInteractor: ITranslateInteractor<DataModel>,
     private val handle: SavedStateHandle
-) :
-    BaseTranslateViewModel<AppState>() {
+) : BaseTranslateViewModel(),
+    ITranslateViewModel {
 
     override var isOnline: Boolean = false
 
@@ -51,12 +53,12 @@ class TranslateViewModel(
         loadingInputWordJob?.cancel()
         if (!text.isNullOrEmpty()) {
             if (isOnline) {
-                onLoadingDataModel()
+                onLoadingData()
                 searchJob = viewModelCoroutineScope.launch {
-                    startLoadingDataModel(text)
+                    startLoadingData(text)
                 }
             } else
-                onEmptyDataModel(DISCONNECT_NETWORK)
+                onEmptyData(DISCONNECT_NETWORK)
         } else
             onEmptySearchText()
     }
@@ -71,18 +73,18 @@ class TranslateViewModel(
         }
     }
 
+    override fun insertListRoomTranslateEntity(listRoomTranslateEntity: List<RoomTranslateEntity>) {
+        viewModelCoroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                translateInteractor.insertListRoomTranslateEntity(listRoomTranslateEntity)
+            }
+        }
+    }
+
     override fun onInitView() {
         handle.get<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)?.let {
             translateLiveData.value = AppState.Success(it)
         }
-    }
-
-    override fun getTranslateLiveData(): LiveData<AppState> = translateLiveData
-
-    override fun getSingleEventLiveData(): LiveData<AppState> = singleEventLiveData
-
-    override fun handleError(error: Throwable) {
-        onErrorLoadingDataModel(error)
     }
 
     private fun onEmptySearchText() {
@@ -91,37 +93,36 @@ class TranslateViewModel(
         translateLiveData.value = AppState.EmptyData
     }
 
-    private fun onEmptyDataModel(info: String) {
+    override fun onEmptyData(info: String) {
         handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
-        singleEventLiveData.postValue(AppState.Info(info))
-        translateLiveData.postValue(AppState.EmptyData)
+        super.onEmptyData(info)
     }
 
-    private fun onCorrectDataModel(listTranslateEntity: List<TranslateEntity>) {
+    override fun onCorrectData(listTranslateEntity: List<TranslateEntity>) {
         handle[KEY_HANDLE_TRANSLATE] = listTranslateEntity
-        translateLiveData.postValue(AppState.Success(listTranslateEntity))
+        insertListRoomTranslateEntity(listTranslateEntity.map {
+            mapFromTranslateEntityToRoomTranslateEntity(
+                it
+            )
+        })
+        super.onCorrectData(listTranslateEntity)
     }
 
-    private fun onErrorLoadingDataModel(error: Throwable) {
+    override fun onErrorLoadingData(error: Throwable) {
         handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
-        singleEventLiveData.postValue(AppState.Error(error))
-        translateLiveData.postValue(AppState.EmptyData)
+        super.onErrorLoadingData(error)
     }
 
-    private fun onLoadingDataModel() {
-        translateLiveData.value = AppState.Loading
-    }
-
-    private suspend fun startLoadingDataModel(text: String) {
+    private suspend fun startLoadingData(text: String) {
         translateInteractor.getDataModel(text)
             .map { dataModel ->
                 dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
             }
             .collect {
                 if (it.isEmpty())
-                    onEmptyDataModel(EMPTY_DATA_MODEL)
+                    onEmptyData(EMPTY_DATA_MODEL)
                 else
-                    onCorrectDataModel(it)
+                    onCorrectData(it)
             }
     }
 
@@ -130,10 +131,10 @@ class TranslateViewModel(
             .map { dataModel ->
                 dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
             }
-            .collect {translateEntity ->
+            .collect { translateEntity ->
                 translateLiveData.postValue(AppState.InputWords(translateEntity.map { it.text }))
             }
-        }
+    }
 
     @OptIn(FlowPreview::class)
     private fun setupSearchInputWordStateFlow() {
@@ -172,8 +173,8 @@ class TranslateViewModel(
     }
 
     companion object {
-        private const val EMPTY_DATA_MODEL = "Перевод не найден"
         private const val EMPTY_SEARCH_TEXT = "Введите слово для перевода"
+        private const val EMPTY_DATA_MODEL = "Перевод не найден"
         private const val KEY_HANDLE_TRANSLATE = "KeyHandleTranslate"
         private const val DISCONNECT_NETWORK = "Отсутствует подключение к сети"
         private const val STATE_FLOW_TIMEOUT = 500L

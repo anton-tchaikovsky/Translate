@@ -1,7 +1,7 @@
-package com.example.translate.view.translate.recycle_view.translate_recycle_view
+package com.example.translate.view.recycle_view.translate_recycle_view
 
 import com.example.translate.model.data.TranslateEntity
-import com.example.translate.view.translate.recycle_view.IItemRecycleView
+import com.example.translate.view.recycle_view.IItemRecycleView
 
 interface IItemTranslateViewHolder: IItemRecycleView<TranslateEntity> {
 

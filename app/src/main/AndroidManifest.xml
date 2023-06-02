@@ -17,6 +17,10 @@
         android:theme="@style/Base.Theme.Translate"
         tools:targetApi="31">
         <activity
+            android:name=".view.translate_history.TranslateHistoryActivity"
+            android:exported="false"
+            android:parentActivityName=".view.translate.TranslateActivity" />
+        <activity
             android:name=".view.translate.TranslateActivity"
             android:exported="true">
             <intent-filter>
@@ -25,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.translate_foto.TranslateFotoActivity"/>
+        <activity android:name=".view.translate_foto.TranslateFotoActivity" />
     </application>
 
 </manifest>

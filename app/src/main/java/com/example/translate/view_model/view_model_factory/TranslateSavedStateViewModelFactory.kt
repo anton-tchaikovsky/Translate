@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.example.translate.interactor.ITranslateInteractor
 import com.example.translate.model.data.dto.DataModel
-import com.example.translate.view_model.TranslateViewModel
+import com.example.translate.view_model.translate_view_model.TranslateViewModel
 
 class TranslateSavedStateViewModelFactory(
     private val translateInteractor: ITranslateInteractor<DataModel>,

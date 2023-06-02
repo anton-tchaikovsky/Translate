@@ -32,11 +32,21 @@ class TranslateFotoActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        initToolbar()
         initSwipeRefreshLayout()
     }
 
+    private fun initToolbar() {
+        binding.toolbar.toolbar.apply {
+            setSupportActionBar(this@apply)
+            setNavigationOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
     private fun initSwipeRefreshLayout() {
-        binding.root.apply {
+        binding.translateFotoSwipeRefreshLayout.apply {
             setColorSchemeResources(R.color.primary_theme_orange)
             setProgressBackgroundColorSchemeResource(R.color.surface_theme_orange)
             setOnRefreshListener {
@@ -52,7 +62,7 @@ class TranslateFotoActivity : AppCompatActivity() {
     }
 
     private fun showLoadingImage() {
-        binding.root.apply {
+        binding.translateFotoSwipeRefreshLayout.apply {
             setBackgroundColor(resources.getColor(android.R.color.white,null))
             isRefreshing = true
         }
@@ -61,7 +71,7 @@ class TranslateFotoActivity : AppCompatActivity() {
     }
 
     private fun showImage(image: Drawable?){
-        binding.root.apply {
+        binding.translateFotoSwipeRefreshLayout.apply {
             setBackgroundColor(resources.getColor(android.R.color.black,null))
             isRefreshing = false
         }
@@ -71,7 +81,7 @@ class TranslateFotoActivity : AppCompatActivity() {
     }
 
     private fun showError(){
-        binding.root.apply {
+        binding.translateFotoSwipeRefreshLayout.apply {
             setBackgroundColor(resources.getColor(android.R.color.white,null))
             isRefreshing = false
         }

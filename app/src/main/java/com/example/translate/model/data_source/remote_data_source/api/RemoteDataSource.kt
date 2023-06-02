@@ -1,8 +1,8 @@
-package com.example.translate.model.data_source.api
+package com.example.translate.model.data_source.remote_data_source.api
 
 import android.util.Log
 import com.example.translate.model.data.dto.DataModel
-import com.example.translate.model.data_source.IDataSource
+import com.example.translate.model.data_source.remote_data_source.IRemoteDataSource
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RemoteDataSource : IDataSource<DataModel> {
+class RemoteDataSource : IRemoteDataSource<DataModel> {
 
     private val interceptor = HttpLoggingInterceptor {
         Log.d(LOG_TAG_OK_HTTP, it)

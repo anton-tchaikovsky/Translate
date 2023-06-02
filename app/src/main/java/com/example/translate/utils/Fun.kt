@@ -3,6 +3,7 @@ package com.example.translate.utils
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.dto.DataModelItem
 import com.example.translate.model.data.dto.Translation
+import com.example.translate.model.room.RoomTranslateEntity
 
 fun mapFromDataModelItemToTranslateEntity(dataModelItem: DataModelItem) =
     dataModelItem.run {
@@ -26,6 +27,28 @@ fun mapFromTranslateToTranslateText(translate: Translation) =
 fun extractImageUrl (imageUrlDataModelItem:String) =
     imageUrlDataModelItem.run{
         substring(indexOf(HTTPS))
+    }
+
+fun mapFromTranslateEntityToRoomTranslateEntity(translateEntity: TranslateEntity) =
+    translateEntity.run {
+        RoomTranslateEntity(
+            id,
+            text,
+            transcription,
+            textTranslation,
+            imageUrl
+        )
+    }
+
+fun mapFromRoomTranslateEntityToTranslateEntity(roomTranslateEntity: RoomTranslateEntity) =
+    roomTranslateEntity.run {
+        TranslateEntity(
+            id,
+            text,
+            transcription,
+            textTranslation,
+            imageUrl
+        )
     }
 
 const val HTTPS = "https"

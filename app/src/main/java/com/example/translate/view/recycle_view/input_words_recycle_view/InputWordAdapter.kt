@@ -1,4 +1,4 @@
-package com.example.translate.view.translate.recycle_view.input_words_recycle_view
+package com.example.translate.view.recycle_view.input_words_recycle_view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

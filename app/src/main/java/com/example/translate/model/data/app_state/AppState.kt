@@ -1,4 +1,6 @@
-package com.example.translate.model.data
+package com.example.translate.model.data.app_state
+
+import com.example.translate.model.data.TranslateEntity
 
 sealed class AppState{
 

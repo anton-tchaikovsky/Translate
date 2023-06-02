@@ -20,4 +20,7 @@
     <dimen name="min_height_image_view">96dp</dimen>
     <dimen name="min_widht_image_view">96dp</dimen>
 
+    <!--    activity_translate_history-->
+    <dimen name="padding_translate_history_container">4dp</dimen>
+
 </resources>

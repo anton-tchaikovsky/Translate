@@ -2,6 +2,8 @@ package com.example.translate.view.translate
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -13,25 +15,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
-import com.example.translate.model.data.AppState
 import com.example.translate.model.data.TranslateEntity
-import com.example.translate.view.translate.recycle_view.input_words_recycle_view.InputWordAdapter
-import com.example.translate.view.translate.recycle_view.translate_recycle_view.TranslateAdapter
-import com.example.translate.view.translate_foto.TranslateFotoActivity
-import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.translate.model.data.app_state.AppState
+import com.example.translate.view.BaseTranslateActivity
+import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
+import com.example.translate.view.translate_history.TranslateHistoryActivity
+import com.example.translate.view_model.translate_view_model.TranslateViewModel
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
-class TranslateActivity : BaseTranslateActivity<AppState>() {
+class TranslateActivity : BaseTranslateActivity() {
 
     private lateinit var binding: ActivityTranslateBinding
-
-    private val translateAdapter: TranslateAdapter by lazy {
-        TranslateAdapter {
-            openTranslatePhoto(it) }
-    }
 
     private val inputWordsAdapter: InputWordAdapter by lazy {
         InputWordAdapter {
@@ -47,7 +44,7 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         )
     }
 
-    override val translateViewModel: BaseTranslateViewModel<AppState> by viewModels {
+    override val translateViewModel: TranslateViewModel by viewModels {
         translateSavedStateViewModelFactory
     }
 
@@ -57,7 +54,28 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         super.onCreate(savedInstanceState)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_translate_activity, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.history -> {
+                openTranslateHistory()
+                return true
+            }
+
+            R.id.favourites -> {
+                openTranslateFavourites()
+                return true
+            }
+        }
+        return false
+    }
+
     override fun initView() {
+        initToolbar()
         initSearchTextLayout()
         hideProgressLayout()
         initTranslateLayout()
@@ -91,6 +109,13 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
             is AppState.InputWords -> {
                 showInputWords(appState.listInputWords)
             }
+        }
+    }
+
+    private fun initToolbar() {
+        binding.toolbar.toolbar.apply {
+            navigationIcon = null
+            setSupportActionBar(this@apply)
         }
     }
 
@@ -164,9 +189,10 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         }
     }
 
-    private fun initInputWordRecyclerView(){
+    private fun initInputWordRecyclerView() {
         binding.searchTextLayout.inputWordsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
+            layoutManager =
+                LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
             adapter = inputWordsAdapter
         }
     }
@@ -201,14 +227,18 @@ class TranslateActivity : BaseTranslateActivity<AppState>() {
         }
     }
 
-    private fun selectingInputWord(inputWord: String){
+    private fun selectingInputWord(inputWord: String) {
         isSelectedInputWord = true
         binding.searchTextLayout.searchTextEditText.setText(inputWord)
         inputWordsAdapter.updateListInputWord(listOf())
     }
 
-    private fun openTranslatePhoto(imageUrl: String) {
-        startActivity(TranslateFotoActivity.getIntent(this, imageUrl))
+    private fun openTranslateFavourites() {
+
+    }
+
+    private fun openTranslateHistory() {
+        startActivity(TranslateHistoryActivity.getIntent(this))
     }
 
 }

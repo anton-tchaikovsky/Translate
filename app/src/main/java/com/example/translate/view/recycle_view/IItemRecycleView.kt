@@ -1,4 +1,4 @@
-package com.example.translate.view.translate.recycle_view
+package com.example.translate.view.recycle_view
 
 interface IItemRecycleView <T>{
 
