@@ -1,6 +1,8 @@
 package com.example.translate.view_model
 
-interface IDataLoader <T> {
+import com.example.translate.model.data.TranslateEntity
+
+interface IDataLoader {
 
     fun onLoadingData()
 
@@ -8,6 +10,8 @@ interface IDataLoader <T> {
 
     fun onEmptyData(info: String)
 
-    fun onCorrectData(listTranslateEntity: List<T>)
+    fun onCorrectData(listTranslateEntity: List<TranslateEntity>)
+
+    fun onChangingFavoritesState(translateEntity: TranslateEntity)
 
 }

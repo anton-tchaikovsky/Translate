@@ -18,5 +18,10 @@ interface IRepository <T: Any> {
 
     fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity>
 
+    fun readListFavoritesRoomTranslateEntity(): List<RoomTranslateEntity>
+
+    fun updateRoomTranslateEntity(roomTranslateEntity: RoomTranslateEntity)
+
+    fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity>
 
 }

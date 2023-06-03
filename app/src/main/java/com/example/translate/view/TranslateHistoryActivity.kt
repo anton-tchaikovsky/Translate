@@ -1,4 +1,4 @@
-package com.example.translate.view.translate_history
+package com.example.translate.view
 
 import android.content.Context
 import android.content.Intent
@@ -14,14 +14,13 @@ import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateHistoryBinding
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.app_state.AppState
-import com.example.translate.view.BaseTranslateActivity
 import com.example.translate.view_model.translate_history_view_model.TranslateHistoryViewModel
 import com.example.translate.view_model.view_model_factory.TranslateHistoryViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
-class TranslateHistoryActivity : BaseTranslateActivity() {
+open class TranslateHistoryActivity : BaseTranslateActivity() {
 
     private lateinit var binding: ActivityTranslateHistoryBinding
 
@@ -73,7 +72,13 @@ class TranslateHistoryActivity : BaseTranslateActivity() {
             is AppState.InputWords -> {
 
             }
+
+            is AppState.SuccessChangeFavorites -> updateTranslateEntity(appState.updatePosition, appState.listTranslateEntity)
         }
+    }
+
+    private fun updateTranslateEntity(updatePosition: Int, listTranslateEntity: List<TranslateEntity>) {
+        translateAdapter.updateListTranslateEntity(updatePosition, listTranslateEntity)
     }
 
     private fun initToolbar() {

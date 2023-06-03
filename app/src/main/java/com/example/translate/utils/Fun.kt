@@ -36,18 +36,23 @@ fun mapFromTranslateEntityToRoomTranslateEntity(translateEntity: TranslateEntity
             text,
             transcription,
             textTranslation,
-            imageUrl
+            imageUrl,
+            isFavorites.toString()
         )
     }
 
 fun mapFromRoomTranslateEntityToTranslateEntity(roomTranslateEntity: RoomTranslateEntity) =
     roomTranslateEntity.run {
+        var isFavorites = false
+        if (this.isFavorites == "true")
+            isFavorites = true
         TranslateEntity(
             id,
             text,
             transcription,
             textTranslation,
-            imageUrl
+            imageUrl,
+            isFavorites
         )
     }
 

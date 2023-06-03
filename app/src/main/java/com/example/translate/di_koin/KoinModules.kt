@@ -16,6 +16,7 @@ import com.example.translate.model.network.NetworkStatus
 import com.example.translate.model.repository.IRepository
 import com.example.translate.model.repository.Repository
 import com.example.translate.model.room.RoomTranslateDB
+import com.example.translate.view_model.view_model_factory.TranslateFavoritesViewModelFactory
 import com.example.translate.view_model.view_model_factory.TranslateHistoryViewModelFactory
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import org.koin.android.ext.koin.androidApplication
@@ -44,13 +45,15 @@ val roomDatabaseModule = module {
             context = androidApplication(),
             RoomTranslateDB::class.java,
             "translate_database"
-        ).build()
+        )
+            .addMigrations(RoomTranslateDB.MIGRATION_1_2)
+            .build()
     }
     single { get<RoomTranslateDB>().getRoomDAO() }
 }
 
 val translateModule = module {
-    factory<ITranslateInteractor<DataModel>> {
+    single <ITranslateInteractor<DataModel>> {
         TranslateInteractor(repository = get())
     }
     factory { (owner: SavedStateRegistryOwner) ->
@@ -58,6 +61,9 @@ val translateModule = module {
     }
     factory {
         TranslateHistoryViewModelFactory(translateInteractor = get())
+    }
+    factory {
+        TranslateFavoritesViewModelFactory(translateInteractor = get())
     }
 }
 

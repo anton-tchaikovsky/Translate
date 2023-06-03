@@ -9,10 +9,10 @@
             android:contentDescription="@string/history"
             app:showAsAction="ifRoom" />
         <item
-            android:id="@+id/favourites"
-            android:title="@string/favourites"
+            android:id="@+id/favorites"
+            android:title="@string/favorites"
             android:icon="@drawable/baseline_favorite_24"
-            android:contentDescription="@string/favourites"
+            android:contentDescription="@string/favorites"
             app:showAsAction="ifRoom"
             />
     </group>

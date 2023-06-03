@@ -15,4 +15,14 @@ class LocalDataSource (private val roomTranslateDAO: RoomTranslateDAO):ILocalDat
     override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
         roomTranslateDAO.readListRoomTranslateEntity(text)
 
+    override fun readListFavoritesRoomTranslateEntity(): List<RoomTranslateEntity> =
+        roomTranslateDAO.readListFavoritesRoomTranslateEntity()
+
+    override fun updateRoomTranslateEntity(roomTranslateEntity: RoomTranslateEntity) {
+        roomTranslateDAO.updateRoomTranslateEntity(roomTranslateEntity)
+    }
+
+    override fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity> =
+        roomTranslateDAO.readListRoomTranslateEntityById(listId)
+
 }

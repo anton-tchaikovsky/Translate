@@ -71,11 +71,35 @@ class TranslateViewModel(
         }
     }
 
-    override fun insertListRoomTranslateEntity(listRoomTranslateEntity: List<RoomTranslateEntity>) {
+    override suspend fun insertListRoomTranslateEntity(listRoomTranslateEntity: List<RoomTranslateEntity>) {
+        withContext(Dispatchers.IO) {
+            translateInteractor.insertListRoomTranslateEntity(listRoomTranslateEntity)
+        }
+    }
+
+    override suspend fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity> =
+        withContext(Dispatchers.IO) {
+            translateInteractor.readListRoomTranslateEntityById(listId)
+        }
+
+    override fun onChangingFavoritesState(translateEntity: TranslateEntity) {
+        val updatePosition = listTranslateEntity.indexOf(translateEntity)
+        val updateTranslateEntity = translateEntity.apply {
+            isFavorites = !isFavorites
+        }
         viewModelCoroutineScope.launch {
             withContext(Dispatchers.IO) {
-                translateInteractor.insertListRoomTranslateEntity(listRoomTranslateEntity)
+                listTranslateEntity[updatePosition] = updateTranslateEntity
+                translateInteractor.updateRoomTranslateEntity(
+                    mapFromTranslateEntityToRoomTranslateEntity(listTranslateEntity[updatePosition])
+                )
             }
+            translateLiveData.postValue(
+                AppState.SuccessChangeFavorites(
+                    updatePosition,
+                    listTranslateEntity
+                )
+            )
         }
     }
 
@@ -98,11 +122,6 @@ class TranslateViewModel(
 
     override fun onCorrectData(listTranslateEntity: List<TranslateEntity>) {
         handle[KEY_HANDLE_TRANSLATE] = listTranslateEntity
-        insertListRoomTranslateEntity(listTranslateEntity.map {
-            mapFromTranslateEntityToRoomTranslateEntity(
-                it
-            )
-        })
         super.onCorrectData(listTranslateEntity)
     }
 
@@ -139,8 +158,25 @@ class TranslateViewModel(
             .collect {
                 if (it.isEmpty())
                     onEmptyData(EMPTY_DATA_FROM_REMOTE_DATA_SOURCE)
-                else
-                    onCorrectData(it)
+                else {
+                    val listId = it.map { translateEntity ->
+                        translateEntity.id
+                    }
+                    viewModelCoroutineScope.launch {
+                        insertListRoomTranslateEntity(it.map { translateEntity ->
+                            mapFromTranslateEntityToRoomTranslateEntity(translateEntity)
+                        })
+                        val translateEntity =
+                            readListRoomTranslateEntityById(listId)
+                                .map { roomTranslateEntity ->
+                                    mapFromRoomTranslateEntityToTranslateEntity(
+                                        roomTranslateEntity
+                                    )
+                                }
+                        onCorrectData(translateEntity)
+                    }
+                }
+
             }
     }
 
@@ -159,7 +195,7 @@ class TranslateViewModel(
         withContext(Dispatchers.IO) {
             translateInteractor.readListRoomTranslateEntity(inputWord).map {
                 mapFromRoomTranslateEntityToTranslateEntity(it)
-            }.let {listTranslateEntity ->
+            }.let { listTranslateEntity ->
                 translateLiveData.postValue(AppState.InputWords(listTranslateEntity.map { it.text }))
             }
         }

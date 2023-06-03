@@ -1,5 +1,6 @@
 package com.example.translate.view_model
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 
-abstract class BaseTranslateViewModel: ViewModel(), IDataLoader<TranslateEntity> {
+abstract class BaseTranslateViewModel: ViewModel(), IDataLoader {
 
     protected val translateLiveData = MutableLiveData<AppState>()
 
@@ -24,6 +25,8 @@ abstract class BaseTranslateViewModel: ViewModel(), IDataLoader<TranslateEntity>
             handleError(throwable)
         })
 
+    protected val  listTranslateEntity: MutableList<TranslateEntity> = mutableListOf()
+
     override fun onCleared() {
         super.onCleared()
         cancelJob()
@@ -34,17 +37,23 @@ abstract class BaseTranslateViewModel: ViewModel(), IDataLoader<TranslateEntity>
     }
 
     override fun onErrorLoadingData(error: Throwable) {
+        this.listTranslateEntity.clear()
         singleEventLiveData.postValue(AppState.Error(error))
         translateLiveData.postValue(AppState.EmptyData)
     }
 
     override fun onEmptyData(info: String) {
+        this.listTranslateEntity.clear()
         singleEventLiveData.postValue(AppState.Info(info))
         translateLiveData.postValue(AppState.EmptyData)
     }
 
     override fun onCorrectData(listTranslateEntity: List<TranslateEntity>) {
-        translateLiveData.postValue(AppState.Success(listTranslateEntity))
+        this.listTranslateEntity.apply {
+            clear()
+            addAll(listTranslateEntity)
+        }
+        translateLiveData.postValue(AppState.Success(this.listTranslateEntity))
     }
 
     private fun cancelJob(){
@@ -59,6 +68,7 @@ abstract class BaseTranslateViewModel: ViewModel(), IDataLoader<TranslateEntity>
 
     private fun handleError (error: Throwable){
         onErrorLoadingData(error)
+        Log.d("@@@", error.message.toString())
     }
 
 }

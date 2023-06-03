@@ -10,6 +10,8 @@ interface ITranslateViewModel {
 
     fun onChangingInputWord(inputWord: String?)
 
-    fun insertListRoomTranslateEntity(listRoomTranslateEntity: List<RoomTranslateEntity>)
+    suspend fun insertListRoomTranslateEntity(listRoomTranslateEntity: List<RoomTranslateEntity>)
+
+    suspend fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity>
 
 }

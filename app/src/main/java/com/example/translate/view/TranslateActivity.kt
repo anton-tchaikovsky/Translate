@@ -1,4 +1,4 @@
-package com.example.translate.view.translate
+package com.example.translate.view
 
 import android.content.Context
 import android.os.Bundle
@@ -17,9 +17,7 @@ import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.model.data.TranslateEntity
 import com.example.translate.model.data.app_state.AppState
-import com.example.translate.view.BaseTranslateActivity
 import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
-import com.example.translate.view.translate_history.TranslateHistoryActivity
 import com.example.translate.view_model.translate_view_model.TranslateViewModel
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -66,8 +64,8 @@ class TranslateActivity : BaseTranslateActivity() {
                 return true
             }
 
-            R.id.favourites -> {
-                openTranslateFavourites()
+            R.id.favorites -> {
+                openTranslateFavorites()
                 return true
             }
         }
@@ -109,7 +107,13 @@ class TranslateActivity : BaseTranslateActivity() {
             is AppState.InputWords -> {
                 showInputWords(appState.listInputWords)
             }
+
+            is AppState.SuccessChangeFavorites -> updateTranslateEntity(appState.updatePosition, appState.listTranslateEntity)
         }
+    }
+
+    private fun updateTranslateEntity(updatePosition: Int, listTranslateEntity: List<TranslateEntity>) {
+        translateAdapter.updateListTranslateEntity(updatePosition, listTranslateEntity)
     }
 
     private fun initToolbar() {
@@ -233,8 +237,8 @@ class TranslateActivity : BaseTranslateActivity() {
         inputWordsAdapter.updateListInputWord(listOf())
     }
 
-    private fun openTranslateFavourites() {
-
+    private fun openTranslateFavorites() {
+        startActivity(TranslateFavoritesActivity.getIntent(this))
     }
 
     private fun openTranslateHistory() {

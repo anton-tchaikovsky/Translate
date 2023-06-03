@@ -33,4 +33,14 @@ class Repository(
     override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
         localDataSource.readListRoomTranslateEntity(text)
 
+    override fun readListFavoritesRoomTranslateEntity(): List<RoomTranslateEntity> =
+        localDataSource.readListFavoritesRoomTranslateEntity()
+
+    override fun updateRoomTranslateEntity(roomTranslateEntity: RoomTranslateEntity) {
+        localDataSource.updateRoomTranslateEntity(roomTranslateEntity)
+    }
+
+    override fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity> =
+        localDataSource.readListRoomTranslateEntityById(listId)
+
 }

@@ -6,6 +6,8 @@ sealed class AppState{
 
     class Success (val listTranslateEntity: List<TranslateEntity> = listOf()): AppState()
 
+    class SuccessChangeFavorites(val updatePosition: Int, val listTranslateEntity: List<TranslateEntity> = listOf()): AppState()
+
     class InputWords (val listInputWords: List<String> = listOf()): AppState()
 
     class Error (val error: Throwable): AppState()

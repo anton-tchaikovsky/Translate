@@ -16,5 +16,7 @@ data class RoomTranslateEntity(
     @ColumnInfo(name = "rus_text")
     val textTranslation: String,
     @ColumnInfo(name = "image_url")
-    val imageUrl: String
+    val imageUrl: String,
+    @ColumnInfo (name = "is_favorites")
+    var isFavorites: String = "false"
 )

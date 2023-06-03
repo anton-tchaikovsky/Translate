@@ -1,4 +1,4 @@
-package com.example.translate.view.translate_foto
+package com.example.translate.view
 
 import android.content.Context
 import android.content.Intent
