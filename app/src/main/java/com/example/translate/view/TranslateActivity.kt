@@ -6,27 +6,28 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.databinding.ProgressLayoutBinding
+import com.example.core.databinding.TranslateLayoutBinding
+import com.example.core.view.BaseTranslateActivity
 import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
-import com.example.translate.model.data.TranslateEntity
-import com.example.translate.model.data.app_state.AppState
 import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
 import com.example.translate.view_model.translate_view_model.TranslateViewModel
 import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
-import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 class TranslateActivity : BaseTranslateActivity() {
 
     private lateinit var binding: ActivityTranslateBinding
+
+    override lateinit var loadingBinding: ProgressLayoutBinding
+
+    override lateinit var translateBinding: TranslateLayoutBinding
 
     private val inputWordsAdapter: InputWordAdapter by lazy {
         InputWordAdapter {
@@ -48,6 +49,8 @@ class TranslateActivity : BaseTranslateActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTranslateBinding.inflate(layoutInflater)
+        loadingBinding = binding.progressLayout
+        translateBinding = binding.translateLayout
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
     }
@@ -73,84 +76,20 @@ class TranslateActivity : BaseTranslateActivity() {
     }
 
     override fun initView() {
-        initToolbar()
+        super.initView()
         initSearchTextLayout()
-        hideProgressLayout()
-        initTranslateLayout()
-        translateViewModel.onInitView()
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                showTranslate(appState.listTranslateEntity)
-                hideProgressLayout()
-            }
-
-            is AppState.Error -> {
-                showError(appState.error)
-                hideProgressLayout()
-            }
-
-            is AppState.Info -> {
-                showInfo(appState.info)
-                hideProgressLayout()
-            }
-
-            is AppState.Loading -> showProgressLayout()
-
-            is AppState.EmptyData -> {
-                showEmptyData()
-                hideProgressLayout()
-            }
-
-            is AppState.InputWords -> {
-                showInputWords(appState.listInputWords)
-            }
-
-            is AppState.SuccessChangeFavorites -> updateTranslateEntity(appState.updatePosition, appState.listTranslateEntity)
-        }
+    override fun showInputWords(listInputWords: List<String>) {
+        inputWordsAdapter.updateListInputWord(listInputWords)
     }
 
-    private fun updateTranslateEntity(updatePosition: Int, listTranslateEntity: List<TranslateEntity>) {
-        translateAdapter.updateListTranslateEntity(updatePosition, listTranslateEntity)
-    }
 
-    private fun initToolbar() {
+    override fun initToolbar() {
         binding.toolbar.toolbar.apply {
             navigationIcon = null
             setSupportActionBar(this@apply)
         }
-    }
-
-    private fun showInputWords(listInputWord: List<String>) {
-        inputWordsAdapter.updateListInputWord(listInputWord)
-    }
-
-    private fun showEmptyData() {
-        translateAdapter.updateListTranslateEntity()
-    }
-
-    private fun showTranslate(listTranslateEntity: List<TranslateEntity>) {
-        translateAdapter.updateListTranslateEntity(listTranslateEntity)
-    }
-
-    private fun showInfo(info: String) {
-        Snackbar.make(binding.root, info, Snackbar.LENGTH_SHORT).show()
-    }
-
-    private fun showError(error: Throwable) {
-        Toast.makeText(this, error.message.toString(), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showProgressLayout() {
-        binding.translateLayout.root.visibility = View.GONE
-        binding.progressLayout.root.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressLayout() {
-        binding.progressLayout.root.visibility = View.GONE
-        binding.translateLayout.root.visibility = View.VISIBLE
     }
 
     private fun initSearchTextLayout() {
@@ -198,29 +137,6 @@ class TranslateActivity : BaseTranslateActivity() {
             layoutManager =
                 LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
             adapter = inputWordsAdapter
-        }
-    }
-
-    private fun initTranslateLayout() {
-        binding.translateLayout.root.visibility = View.GONE
-        initTranslateRecyclerView()
-    }
-
-    private fun initTranslateRecyclerView() {
-        binding.translateLayout.translateRecyclerView.apply {
-            layoutManager =
-                LinearLayoutManager(this@TranslateActivity, RecyclerView.VERTICAL, false)
-            adapter = translateAdapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    this@TranslateActivity,
-                    LinearLayoutManager.VERTICAL
-                ).also {
-                    ContextCompat.getDrawable(context, R.drawable.divider_item_recycle_view)
-                        ?.let { drawable ->
-                            it.setDrawable(drawable)
-                        }
-                })
         }
     }
 

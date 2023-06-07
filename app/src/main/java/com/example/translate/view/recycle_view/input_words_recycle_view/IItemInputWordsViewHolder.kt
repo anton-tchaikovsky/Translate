@@ -1,6 +1,6 @@
 package com.example.translate.view.recycle_view.input_words_recycle_view
 
-import com.example.translate.view.recycle_view.IItemRecycleView
+import com.example.core.view.recycle_view.IItemRecycleView
 
 interface IItemInputWordsViewHolder: IItemRecycleView<String> {
 

@@ -32,6 +32,7 @@ android {
         }
     }
     compileOptions {
+
         sourceCompatibility Config.java_version
         targetCompatibility Config.java_version
     }
@@ -45,17 +46,15 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.model))
+    implementation(project(Modules.utils))
+    implementation(project(Modules.repository))
+    implementation(project(Modules.translate_foto_screen))
+    implementation (project(Modules.core))
     //UI
     implementation (UI.appcompat)
     implementation (UI.material)
     implementation (UI.constraintlayout)
-    implementation (UI.swiperefreshlayout)
-    //Retrofit
-    implementation (Retrofit.retrofit)
-    implementation (Retrofit.converter_gson)
-    //for Retrofit
-    implementation (Retrofit.logging_interceptor)
-    implementation (Retrofit.retrofit2_kotlin_coroutines_adapter)
     //Core
     implementation (Core.core_ktx)
     implementation (Core.recyclerview)
@@ -66,9 +65,8 @@ dependencies {
     //Coroutines
     implementation (Coroutines.kotlinx_coroutines_core)
     implementation (Coroutines.kotlinx_coroutines_android)
-    //Coil
-    implementation (Coil.coil)
     //Room
     implementation (Room.room_runtime)
     kapt (Room.room_compiler)
+
 }

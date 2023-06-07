@@ -12,6 +12,15 @@ object Config {
     const val version_name = "1.0"
 }
 
+object Modules {
+    const val model = ":model"
+    const val repository = ":repository"
+    const val utils = ":utils"
+    const val translate_foto_screen = ":translate_foto_screen"
+    const val core = ":core"
+    const val app = ":app"
+}
+
 object DependenciesVersions {
     //UI
     const val appcompat = "1.6.1"

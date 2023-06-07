@@ -1,6 +1,6 @@
 package com.example.translate.view_model.translate_view_model
 
-import com.example.translate.model.room.RoomTranslateEntity
+import com.example.repository.room.RoomTranslateEntity
 
 interface ITranslateViewModel {
 

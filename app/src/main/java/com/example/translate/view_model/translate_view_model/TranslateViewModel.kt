@@ -1,15 +1,15 @@
 package com.example.translate.view_model.translate_view_model
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.translate.interactor.ITranslateInteractor
-import com.example.translate.model.data.TranslateEntity
-import com.example.translate.model.data.app_state.AppState
-import com.example.translate.model.data.dto.DataModel
-import com.example.translate.model.room.RoomTranslateEntity
-import com.example.translate.utils.mapFromDataModelItemToTranslateEntity
-import com.example.translate.utils.mapFromRoomTranslateEntityToTranslateEntity
-import com.example.translate.utils.mapFromTranslateEntityToRoomTranslateEntity
-import com.example.translate.view_model.BaseTranslateViewModel
+import com.example.model.data.app_state.AppState
+import com.example.model.data.dto.DataModel
+import com.example.model.data.mapper.DataMapper.mapFromDataModelItemToTranslateEntity
+import com.example.repository.room.RoomTranslateEntity
+import com.example.core.interactor.ITranslateInteractor
+import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
+import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
+import com.example.utils.networkstate.INetworkStatus
+import com.example.core.view_model.BaseTranslateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TranslateViewModel(
-    private val translateInteractor: ITranslateInteractor<DataModel>,
+    override val translateInteractor: ITranslateInteractor<DataModel>,
+    private val networkStatus: INetworkStatus,
     private val handle: SavedStateHandle
 ) : BaseTranslateViewModel(),
     ITranslateViewModel {
@@ -45,7 +46,7 @@ class TranslateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        translateInteractor.unregisterNetworkCallback()
+       networkStatus.unregisterNetworkCallback()
     }
 
     override fun onSearchWord(text: String?) {
@@ -82,51 +83,30 @@ class TranslateViewModel(
             translateInteractor.readListRoomTranslateEntityById(listId)
         }
 
-    override fun onChangingFavoritesState(translateEntity: TranslateEntity) {
-        val updatePosition = listTranslateEntity.indexOf(translateEntity)
-        val updateTranslateEntity = translateEntity.apply {
-            isFavorites = !isFavorites
-        }
-        viewModelCoroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                listTranslateEntity[updatePosition] = updateTranslateEntity
-                translateInteractor.updateRoomTranslateEntity(
-                    mapFromTranslateEntityToRoomTranslateEntity(listTranslateEntity[updatePosition])
-                )
-            }
-            translateLiveData.postValue(
-                AppState.SuccessChangeFavorites(
-                    updatePosition,
-                    listTranslateEntity
-                )
-            )
-        }
-    }
-
     override fun onInitView() {
-        handle.get<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)?.let {
+        handle.get<List<com.example.model.data.TranslateEntity>>(KEY_HANDLE_TRANSLATE)?.let {
             translateLiveData.value = AppState.Success(it)
         }
     }
 
     private fun onEmptySearchText() {
-        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<com.example.model.data.TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         singleEventLiveData.value = AppState.Info(EMPTY_SEARCH_TEXT)
         translateLiveData.value = AppState.EmptyData
     }
 
     override fun onEmptyData(info: String) {
-        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<com.example.model.data.TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         super.onEmptyData(info)
     }
 
-    override fun onCorrectData(listTranslateEntity: List<TranslateEntity>) {
+    override fun onCorrectData(listTranslateEntity: List<com.example.model.data.TranslateEntity>) {
         handle[KEY_HANDLE_TRANSLATE] = listTranslateEntity
         super.onCorrectData(listTranslateEntity)
     }
 
     override fun onErrorLoadingData(error: Throwable) {
-        handle.remove<List<TranslateEntity>>(KEY_HANDLE_TRANSLATE)
+        handle.remove<List<com.example.model.data.TranslateEntity>>(KEY_HANDLE_TRANSLATE)
         super.onErrorLoadingData(error)
     }
 
@@ -153,7 +133,11 @@ class TranslateViewModel(
     private suspend fun startLoadingDataFromRemoteDataSourse(text: String) {
         translateInteractor.getDataModel(text)
             .map { dataModel ->
-                dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
+                dataModel.map {
+                    mapFromDataModelItemToTranslateEntity(
+                        it
+                    )
+                }
             }
             .collect {
                 if (it.isEmpty())
@@ -164,7 +148,9 @@ class TranslateViewModel(
                     }
                     viewModelCoroutineScope.launch {
                         insertListRoomTranslateEntity(it.map { translateEntity ->
-                            mapFromTranslateEntityToRoomTranslateEntity(translateEntity)
+                            mapFromTranslateEntityToRoomTranslateEntity(
+                                translateEntity
+                            )
                         })
                         val translateEntity =
                             readListRoomTranslateEntityById(listId)
@@ -184,7 +170,11 @@ class TranslateViewModel(
     private suspend fun startLoadingInputWordFromRemoteDataSource(inputWord: String) {
         translateInteractor.getDataModel(inputWord)
             .map { dataModel ->
-                dataModel.map { mapFromDataModelItemToTranslateEntity(it) }
+                dataModel.map {
+                    mapFromDataModelItemToTranslateEntity(
+                        it
+                    )
+                }
             }
             .collect { listTranslateEntity ->
                 translateLiveData.postValue(AppState.InputWords(listTranslateEntity.map { it.text }))
@@ -229,7 +219,7 @@ class TranslateViewModel(
     private fun setupGettingNetworkState() {
         viewModelCoroutineScope.launch {
             withContext(Dispatchers.IO) {
-                translateInteractor.registerNetworkCallback()
+                networkStatus.registerNetworkCallback()
                     .collect {
                         isOnline = it
                     }

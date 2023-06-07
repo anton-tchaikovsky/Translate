@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TranslateText" parent = "Widget.AppCompat.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:textColorHighlight">?attr/colorPrimaryContainer</item>
+    </style>
+
+    <style name="TranscriptionText" parent = "Widget.AppCompat.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.BodyMedium</item>
+    </style>
+
+</resources>
