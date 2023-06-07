@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    activity_translate_foto-->
+    <dimen name="padding_swipe_refresh_layout">8dp</dimen>
+    <dimen name="min_height_image_view">96dp</dimen>
+    <dimen name="min_widht_image_view">96dp</dimen>
+
+</resources>
