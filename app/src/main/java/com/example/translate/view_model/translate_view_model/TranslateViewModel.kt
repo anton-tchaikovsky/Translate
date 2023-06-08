@@ -1,11 +1,12 @@
 package com.example.translate.view_model.translate_view_model
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.core.interactor.IChangingFavoritesStateInteractor
 import com.example.model.data.app_state.AppState
 import com.example.model.data.dto.DataModel
 import com.example.model.data.mapper.DataMapper.mapFromDataModelItemToTranslateEntity
 import com.example.repository.room.RoomTranslateEntity
-import com.example.core.interactor.ITranslateInteractor
+import com.example.translate.interactor.translate_interactor.ITranslateInteractor
 import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
 import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
 import com.example.utils.networkstate.INetworkStatus
@@ -23,10 +24,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TranslateViewModel(
-    override val translateInteractor: ITranslateInteractor<DataModel>,
+    changingFavoritesStateInteractor: IChangingFavoritesStateInteractor,
+    private val translateInteractor: ITranslateInteractor<DataModel>,
     private val networkStatus: INetworkStatus,
     private val handle: SavedStateHandle
-) : BaseTranslateViewModel(),
+) : BaseTranslateViewModel(changingFavoritesStateInteractor),
     ITranslateViewModel {
 
     override var isOnline: Boolean = false
@@ -46,7 +48,7 @@ class TranslateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-       networkStatus.unregisterNetworkCallback()
+        networkStatus.unregisterNetworkCallback()
     }
 
     override fun onSearchWord(text: String?) {

@@ -8,13 +8,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.translate_foto_screen.databinding.ActivityTranslateFotoBinding
 import com.example.utils.image_loader.IImageLoader
-import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.core.scope.Scope
 
-class TranslateFotoActivity : AppCompatActivity() {
+class TranslateFotoActivity : AppCompatActivity(), AndroidScopeComponent {
+
+    override val scope: Scope by activityScope()
 
     private lateinit var binding: ActivityTranslateFotoBinding
 
-    private val imageLoader: IImageLoader = get()
+    private val imageLoader: IImageLoader by inject()
 
     private var imageUrl: String? = null
 

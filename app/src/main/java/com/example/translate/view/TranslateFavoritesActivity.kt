@@ -2,23 +2,12 @@ package com.example.translate.view
 
 import android.content.Context
 import android.content.Intent
-import androidx.activity.viewModels
 import com.example.translate.view_model.translate_favorites_view_model.TranslateFavoritesViewModel
-import com.example.translate.view_model.view_model_factory.TranslateFavoritesViewModelFactory
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TranslateFavoritesActivity:TranslateHistoryActivity() {
 
-    private val translateFavoritesViewModelFactory: TranslateFavoritesViewModelFactory by inject {
-        parametersOf(
-            this
-        )
-    }
-
-    override val translateViewModel: TranslateFavoritesViewModel by viewModels {
-        translateFavoritesViewModelFactory
-    }
+    override val translateViewModel: TranslateFavoritesViewModel by viewModel()
 
     companion object {
         fun getIntent(context: Context) = Intent(context, TranslateFavoritesActivity::class.java)

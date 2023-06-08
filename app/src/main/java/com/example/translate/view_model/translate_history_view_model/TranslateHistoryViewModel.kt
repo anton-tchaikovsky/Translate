@@ -1,16 +1,19 @@
 package com.example.translate.view_model.translate_history_view_model
 
-import com.example.model.data.dto.DataModel
-import com.example.core.interactor.ITranslateInteractor
+import com.example.core.interactor.IChangingFavoritesStateInteractor
 import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
 import com.example.core.view_model.BaseTranslateViewModel
+import com.example.translate.interactor.translate_history_interactor.ITranslateHistoryInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class TranslateHistoryViewModel(
-    override val translateInteractor: ITranslateInteractor<DataModel>
-) : BaseTranslateViewModel(), ITranslateHistoryViewModel {
+    changingFavoritesStateInteractor: IChangingFavoritesStateInteractor,
+    private val translateHistoryInteractor: ITranslateHistoryInteractor
+) : BaseTranslateViewModel(changingFavoritesStateInteractor), ITranslateHistoryViewModel {
+
+    open val emptiData = "История запросов пуста"
 
     override fun onReadListRoomTranslateEntity() {
         onLoadingData()
@@ -25,19 +28,15 @@ open class TranslateHistoryViewModel(
 
     protected open suspend fun startLoadingData() {
         withContext(Dispatchers.IO) {
-            translateInteractor.readListRoomTranslateEntity().map {
+            translateHistoryInteractor.readListRoomTranslateEntity().map {
                 mapFromRoomTranslateEntityToTranslateEntity(it)
             }.let {
                 if (it.isEmpty())
-                    onEmptyData(EMPTY_DATA)
+                    onEmptyData(emptiData)
                 else
                     onCorrectData(it)
             }
         }
-    }
-
-    companion object {
-        private const val EMPTY_DATA = "История запросов пуста"
     }
 
 }

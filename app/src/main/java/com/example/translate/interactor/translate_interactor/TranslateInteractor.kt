@@ -1,4 +1,4 @@
-package com.example.core.interactor
+package com.example.translate.interactor.translate_interactor
 
 import com.example.model.data.dto.DataModel
 import com.example.repository.repository.IRepository
@@ -13,21 +13,10 @@ class TranslateInteractor(private val repository: IRepository<DataModel>) :
         repository.insertListRoomTranslateEntity(listRoomTranslateEntity)
     }
 
-    override fun readListRoomTranslateEntity(): List<RoomTranslateEntity> =
-        repository.readListRoomTranslateEntity()
-
     override fun readListRoomTranslateEntity(text: String): List<RoomTranslateEntity> =
         repository.readListRoomTranslateEntity(text)
 
-    override fun readListFavoritesRoomTranslateEntity(): List<RoomTranslateEntity> =
-        repository.readListFavoritesRoomTranslateEntity()
-
-    override fun updateRoomTranslateEntity(roomTranslateEntity: RoomTranslateEntity) {
-        repository.updateRoomTranslateEntity(roomTranslateEntity)
-    }
-
     override fun readListRoomTranslateEntityById(listId: List<Int>): List<RoomTranslateEntity> =
         repository.readListRoomTranslateEntityById(listId)
-
 
 }

@@ -3,11 +3,10 @@ package com.example.core.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.core.interactor.IChangingFavoritesStateInteractor
+import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
 import com.example.model.data.TranslateEntity
 import com.example.model.data.app_state.AppState
-import com.example.model.data.dto.DataModel
-import com.example.core.interactor.ITranslateInteractor
-import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +15,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class BaseTranslateViewModel: ViewModel(), IDataLoader {
-
-    abstract val translateInteractor: ITranslateInteractor<DataModel>
+abstract class BaseTranslateViewModel(private val changingFavoritesStateInteractor: IChangingFavoritesStateInteractor): ViewModel(), IDataLoader, IChangingFavoritesState {
 
     protected val translateLiveData = MutableLiveData<AppState>()
 
@@ -70,7 +67,7 @@ abstract class BaseTranslateViewModel: ViewModel(), IDataLoader {
         viewModelCoroutineScope.launch {
             withContext(Dispatchers.IO) {
                 listTranslateEntity[updatePosition] = updateTranslateEntity
-                translateInteractor.updateRoomTranslateEntity(
+                changingFavoritesStateInteractor.updateRoomTranslateEntity(
                     mapFromTranslateEntityToRoomTranslateEntity(
                         listTranslateEntity[updatePosition]
                     )

@@ -16,12 +16,16 @@ import com.example.core.view.BaseTranslateActivity
 import com.example.translate.R
 import com.example.translate.databinding.ActivityTranslateBinding
 import com.example.translate.view.recycle_view.input_words_recycle_view.InputWordAdapter
+import com.example.translate.view_model.translate_view_model.TranslateSavedStateViewModelFactory
 import com.example.translate.view_model.translate_view_model.TranslateViewModel
-import com.example.translate.view_model.view_model_factory.TranslateSavedStateViewModelFactory
-import org.koin.android.ext.android.inject
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
 import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 
-class TranslateActivity : BaseTranslateActivity() {
+class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
+
+    override val scope: Scope by activityScope()
 
     private lateinit var binding: ActivityTranslateBinding
 
@@ -37,7 +41,7 @@ class TranslateActivity : BaseTranslateActivity() {
 
     private var isSelectedInputWord = false
 
-    private val translateSavedStateViewModelFactory: TranslateSavedStateViewModelFactory by inject {
+    private val translateSavedStateViewModelFactory: TranslateSavedStateViewModelFactory by scope.inject {
         parametersOf(
             this
         )

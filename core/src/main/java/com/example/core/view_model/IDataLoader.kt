@@ -12,6 +12,4 @@ interface IDataLoader {
 
     fun onCorrectData(listTranslateEntity: List<TranslateEntity>)
 
-    fun onChangingFavoritesState(translateEntity: TranslateEntity)
-
 }
