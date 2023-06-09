@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.databinding.ItemTranslateLayoutBinding
+import com.example.model.data.TranslateEntity
 
 class TranslateAdapter(private val openFotoImageViewClickListener: (urlImage: String) -> Unit,
-private val favoritesImageViewClickListener: (translateEntity: com.example.model.data.TranslateEntity)->Unit) :
+private val favoritesImageViewClickListener: (translateEntity: TranslateEntity)->Unit) :
     RecyclerView.Adapter<TranslateViewHolder>(
     ) {
 
-    private var listTranslateEntity: List<com.example.model.data.TranslateEntity> = listOf()
+    private var listTranslateEntity: List<TranslateEntity> = listOf()
 
     init {
         setHasStableIds(true)
@@ -32,13 +33,13 @@ private val favoritesImageViewClickListener: (translateEntity: com.example.model
     override fun getItemId(position: Int) = listTranslateEntity[position].id.toLong()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateListTranslateEntity(listTranslateEntity: List<com.example.model.data.TranslateEntity> = listOf()) {
+    fun updateListTranslateEntity(listTranslateEntity: List<TranslateEntity> = listOf()) {
         this.listTranslateEntity = listTranslateEntity
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateListTranslateEntity(updatePosition: Int, listTranslateEntity: List<com.example.model.data.TranslateEntity> = listOf()) {
+    fun updateListTranslateEntity(updatePosition: Int, listTranslateEntity: List<TranslateEntity> = listOf()) {
         this.listTranslateEntity = listTranslateEntity
         notifyItemChanged(updatePosition)
     }

@@ -28,7 +28,7 @@ abstract class BaseTranslateViewModel(private val changingFavoritesStateInteract
             handleError(throwable)
         })
 
-    private val  listTranslateEntity: MutableList<TranslateEntity> = mutableListOf()
+   protected val  listTranslateEntity: MutableList<TranslateEntity> = mutableListOf()
 
     override fun onCleared() {
         super.onCleared()
