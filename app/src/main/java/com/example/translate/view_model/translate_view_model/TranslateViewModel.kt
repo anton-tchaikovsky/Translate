@@ -1,16 +1,17 @@
 package com.example.translate.view_model.translate_view_model
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.example.core.interactor.IChangingFavoritesStateInteractor
+import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
+import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
+import com.example.core.view_model.BaseTranslateViewModel
 import com.example.model.data.app_state.AppState
 import com.example.model.data.dto.DataModel
 import com.example.model.data.mapper.DataMapper.mapFromDataModelItemToTranslateEntity
 import com.example.repository.room.RoomTranslateEntity
 import com.example.translate.interactor.translate_interactor.ITranslateInteractor
-import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
-import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
 import com.example.utils.networkstate.INetworkStatus
-import com.example.core.view_model.BaseTranslateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.properties.Delegates
 
 class TranslateViewModel(
     changingFavoritesStateInteractor: IChangingFavoritesStateInteractor,
@@ -31,7 +33,14 @@ class TranslateViewModel(
 ) : BaseTranslateViewModel(changingFavoritesStateInteractor),
     ITranslateViewModel {
 
-    override var isOnline: Boolean = false
+    override var isOnline: Boolean by Delegates.observable(true){ _, oldValue: Boolean, newValue: Boolean ->
+        if (oldValue!=newValue){
+            if(newValue)
+                singleEventLiveData.postValue(AppState.Info(CONNECT_NETWORK))
+            else
+                singleEventLiveData.postValue(AppState.Info(DISCONNECT_NETWORK))
+        }
+    }
 
     private val querySearchInputWordStateFlow = MutableStateFlow("")
 
@@ -218,11 +227,14 @@ class TranslateViewModel(
         }
     }
 
+    @OptIn(FlowPreview::class)
     private fun setupGettingNetworkState() {
         viewModelCoroutineScope.launch {
             withContext(Dispatchers.IO) {
                 networkStatus.registerNetworkCallback()
+                    .debounce(STATE_FLOW_TIMEOUT)
                     .collect {
+                        Log.v ("@@@", it.toString())
                         isOnline = it
                     }
             }
@@ -234,6 +246,8 @@ class TranslateViewModel(
         private const val EMPTY_DATA_FROM_REMOTE_DATA_SOURCE = "Перевод не найден"
         private const val EMPTY_DATA_FROM_LOCAL_DATA_SOURCE =
             "Перевод не найден. Подключите интернет и повторите попытку поиска"
+        private const val DISCONNECT_NETWORK = "Отсутствует подключение к интернету"
+        private const val CONNECT_NETWORK = "Подключение к интернету восстановлено"
         private const val KEY_HANDLE_TRANSLATE = "KeyHandleTranslate"
         private const val STATE_FLOW_TIMEOUT = 500L
     }
