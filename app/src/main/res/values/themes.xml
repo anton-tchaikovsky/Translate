@@ -11,4 +11,14 @@
         <item name="floatingActionButtonPrimaryStyle">@style/SearchFloatingActionButton</item>
     </style>
 
+    <style name="Base.Theme.Start" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
+        <item name="windowSplashScreenBackground">@color/surface_theme_orange</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/primary_container_theme_orange</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.Translate</item>
+
+    </style>
+    
+
+
 </resources>

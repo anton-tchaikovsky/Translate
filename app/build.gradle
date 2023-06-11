@@ -59,6 +59,7 @@ dependencies {
     implementation (Core.core_ktx)
     implementation (Core.recyclerview)
     implementation (Core.activity_ktx)
+    implementation (Core.core_splashscreen)
     //Koin
     implementation (Koin.koin_core)
     implementation (Koin.koin_android)

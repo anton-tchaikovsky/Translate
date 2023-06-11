@@ -32,6 +32,7 @@ object DependenciesVersions {
     const val core_ktx = "1.10.1"
     const val recyclerview = "1.3.0"
     const val activity_ktx = "1.7.2"
+    const val core_splashscreen = "1.0.1"
 
     //Retrofit
     const val retrofit = "2.9.0"
@@ -64,6 +65,7 @@ object Core {
         "androidx.recyclerview:recyclerview:${DependenciesVersions.recyclerview}"
     const val activity_ktx =
         "androidx.activity:activity-ktx:${DependenciesVersions.activity_ktx}"
+    const val core_splashscreen = "androidx.core:core-splashscreen:${DependenciesVersions.core_splashscreen}"
 }
 
 object Retrofit {

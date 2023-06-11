@@ -1,12 +1,18 @@
 package com.example.translate.view
 
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +58,7 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setSplashScreen(installSplashScreen())
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         loadingBinding = binding.progressLayout
         translateBinding = binding.translateLayout
@@ -93,6 +100,24 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
         binding.toolbar.toolbar.apply {
             navigationIcon = null
             setSupportActionBar(this@apply)
+        }
+    }
+
+    private fun setSplashScreen(splashScreen: SplashScreen) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            splashScreen.apply {
+                setOnExitAnimationListener { splashScreenProvider ->
+                    ObjectAnimator.ofFloat(splashScreenProvider.view, View.TRANSLATION_X, 0f, -splashScreenProvider.view.width.toFloat())
+                        .apply {
+                            duration = DURATION_SPLASH_SCREEN
+                            interpolator = DecelerateInterpolator()
+                            doOnEnd {
+                                splashScreenProvider.remove()
+                            }
+                        }
+                        .start()
+                }
+            }
         }
     }
 
@@ -163,6 +188,10 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
 
     private fun openTranslateHistory() {
         startActivity(TranslateHistoryActivity.getIntent(this))
+    }
+
+    companion object {
+        const val DURATION_SPLASH_SCREEN = 2000L
     }
 
 }
