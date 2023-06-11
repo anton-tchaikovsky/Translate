@@ -1,0 +1,6 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/splash_screen_icon">
+    <target
+        android:name = "splash_screen_icon"
+        android:animation="@animator/splash_screen_icon_animator" />
+</animated-vector>
