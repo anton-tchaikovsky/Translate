@@ -6,6 +6,9 @@
     android:viewportHeight="192">
     <group
         android:name = "splash_screen_icon"
+        android:pivotX="12"
+        android:pivotY="12"
+        android:rotation="0"
         android:translateX="84"
         android:translateY="84"
             >

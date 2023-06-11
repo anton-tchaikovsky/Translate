@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -28,6 +30,8 @@ import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.activityScope
 import org.koin.core.parameter.parametersOf
 import org.koin.core.scope.Scope
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
 
@@ -47,6 +51,8 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
 
     private var isSelectedInputWord = false
 
+    private var isHideSplashScreen = false
+
     private val translateSavedStateViewModelFactory: TranslateSavedStateViewModelFactory by scope.inject {
         parametersOf(
             this
@@ -58,7 +64,12 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setSplashScreen(installSplashScreen())
+        val splashScreen = installSplashScreen()
+        startTimer()
+        setHideSplashScreen()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            setAnimateSplashScreen(splashScreen)
+        }
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         loadingBinding = binding.progressLayout
         translateBinding = binding.translateLayout
@@ -95,7 +106,6 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
         inputWordsAdapter.updateListInputWord(listInputWords)
     }
 
-
     override fun initToolbar() {
         binding.toolbar.toolbar.apply {
             navigationIcon = null
@@ -103,20 +113,44 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
         }
     }
 
-    private fun setSplashScreen(splashScreen: SplashScreen) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            splashScreen.apply {
-                setOnExitAnimationListener { splashScreenProvider ->
-                    ObjectAnimator.ofFloat(splashScreenProvider.view, View.TRANSLATION_X, 0f, -splashScreenProvider.view.width.toFloat())
-                        .apply {
-                            duration = DURATION_SPLASH_SCREEN
-                            interpolator = DecelerateInterpolator()
-                            doOnEnd {
-                                splashScreenProvider.remove()
-                            }
-                        }
-                        .start()
+    private fun startTimer() {
+        Timer().schedule(TIMER_DELAY) {
+            isHideSplashScreen = true
+        }
+    }
+
+    private fun setHideSplashScreen() {
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else false
                 }
+            }
+        )
+    }
+
+    @RequiresApi(31)
+    private fun setAnimateSplashScreen(splashScreen: SplashScreen) {
+        splashScreen.apply {
+            setOnExitAnimationListener { splashScreenProvider ->
+                ObjectAnimator.ofFloat(
+                    splashScreenProvider.view,
+                    View.TRANSLATION_X,
+                    0f,
+                    -splashScreenProvider.view.width.toFloat()
+                )
+                    .apply {
+                        duration = DURATION_SPLASH_SCREEN
+                        interpolator = DecelerateInterpolator()
+                        doOnEnd {
+                            splashScreenProvider.remove()
+                        }
+                    }
+                    .start()
             }
         }
     }
@@ -191,7 +225,8 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
     }
 
     companion object {
-        const val DURATION_SPLASH_SCREEN = 2000L
+        const val DURATION_SPLASH_SCREEN = 1000L
+        const val TIMER_DELAY = 10000L
     }
 
 }

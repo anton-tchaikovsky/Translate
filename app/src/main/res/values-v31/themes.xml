@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
 
     <style name="Base.Theme.Start" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon_animated</item>
         <item name="windowSplashScreenBackground">@color/surface_theme_orange</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/primary_container_theme_orange</item>
         <item name="postSplashScreenTheme">@style/Base.Theme.Translate</item>
-        
+        <item name="android:windowSplashScreenAnimationDuration">2000</item>
     </style>
 
 </resources>
