@@ -1,6 +1,5 @@
 package com.example.translate.view_model.translate_view_model
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.example.core.interactor.IChangingFavoritesStateInteractor
 import com.example.core.utils.Mapper.mapFromRoomTranslateEntityToTranslateEntity
@@ -8,7 +7,7 @@ import com.example.core.utils.Mapper.mapFromTranslateEntityToRoomTranslateEntity
 import com.example.core.view_model.BaseTranslateViewModel
 import com.example.model.data.app_state.AppState
 import com.example.model.data.dto.DataModel
-import com.example.model.data.mapper.DataMapper.mapFromDataModelItemToTranslateEntity
+import com.example.model.data.mapper.DataMapper
 import com.example.repository.room.RoomTranslateEntity
 import com.example.translate.interactor.translate_interactor.ITranslateInteractor
 import com.example.utils.networkstate.INetworkStatus
@@ -144,11 +143,7 @@ class TranslateViewModel(
     private suspend fun startLoadingDataFromRemoteDataSourse(text: String) {
         translateInteractor.getDataModel(text)
             .map { dataModel ->
-                dataModel.map {
-                    mapFromDataModelItemToTranslateEntity(
-                        it
-                    )
-                }
+                DataMapper.mapFromDataModeToListTranslateEntity(dataModel)
             }
             .collect {
                 if (it.isEmpty())
@@ -181,11 +176,7 @@ class TranslateViewModel(
     private suspend fun startLoadingInputWordFromRemoteDataSource(inputWord: String) {
         translateInteractor.getDataModel(inputWord)
             .map { dataModel ->
-                dataModel.map {
-                    mapFromDataModelItemToTranslateEntity(
-                        it
-                    )
-                }
+                DataMapper.mapFromDataModeToListTranslateEntity(dataModel)
             }
             .collect { listTranslateEntity ->
                 translateLiveData.postValue(AppState.InputWords(listTranslateEntity.map { it.text }))
@@ -234,7 +225,6 @@ class TranslateViewModel(
                 networkStatus.registerNetworkCallback()
                     .debounce(STATE_FLOW_TIMEOUT)
                     .collect {
-                        Log.v ("@@@", it.toString())
                         isOnline = it
                     }
             }

@@ -34,10 +34,11 @@ open class TranslateHistoryActivity : BaseTranslateActivity(), AndroidScopeCompo
     }
 
     override fun initToolbar() {
-        setSupportActionBar(binding.toolbar.toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
+        binding.toolbar.toolbar.apply {
+            setSupportActionBar(this@apply)
+            setNavigationOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 

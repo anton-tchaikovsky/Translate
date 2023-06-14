@@ -1,3 +1,3 @@
 package com.example.model.data.dto
 
-class DataModel : ArrayList<DataModelItem>()
+class DataModel : ArrayList<DataModelItem?>()

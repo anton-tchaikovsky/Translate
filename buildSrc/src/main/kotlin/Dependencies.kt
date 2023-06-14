@@ -48,6 +48,10 @@ object DependenciesVersions {
 
     //Room
     const val room = "2.5.1"
+
+    //Test
+    const val junit = "4.13.2"
+
 }
 
 object UI {
@@ -65,7 +69,12 @@ object Core {
         "androidx.recyclerview:recyclerview:${DependenciesVersions.recyclerview}"
     const val activity_ktx =
         "androidx.activity:activity-ktx:${DependenciesVersions.activity_ktx}"
-    const val core_splashscreen = "androidx.core:core-splashscreen:${DependenciesVersions.core_splashscreen}"
+    const val core_splashscreen =
+        "androidx.core:core-splashscreen:${DependenciesVersions.core_splashscreen}"
+}
+
+object Test {
+    const val junit = "junit:junit:${DependenciesVersions.junit}"
 }
 
 object Retrofit {

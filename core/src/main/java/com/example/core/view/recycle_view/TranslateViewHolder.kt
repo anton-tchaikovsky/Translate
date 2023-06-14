@@ -1,5 +1,6 @@
 package com.example.core.view.recycle_view
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.R
 import com.example.core.databinding.ItemTranslateLayoutBinding
@@ -46,8 +47,13 @@ class TranslateViewHolder(
         imageUrl: String,
         openFotoImageViewClickListener: (imageUrl: String) -> Unit
     ) {
-        binding.openFotoImageView.setOnClickListener {
-            openFotoImageViewClickListener(imageUrl)
+        binding.openFotoImageView.apply {
+            if (imageUrl.isBlank())
+                visibility = View.GONE
+            else
+                setOnClickListener {
+                    openFotoImageViewClickListener(imageUrl)
+                }
         }
     }
 

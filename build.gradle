@@ -30,6 +30,7 @@ subprojects {
                     jvmTarget = Config.jvm_target
                 }
             }
+
         }
     }
 }

@@ -43,6 +43,8 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
 
     override lateinit var translateBinding: TranslateLayoutBinding
 
+    private var isStartApp = true
+
     private val inputWordsAdapter: InputWordAdapter by lazy {
         InputWordAdapter {
             selectingInputWord(it)
@@ -64,17 +66,28 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        savedInstanceState?.getBoolean(KEY_IS_START_APP)?.let {
+            isStartApp = it
+        }
         val splashScreen = installSplashScreen()
-        startTimer()
-        setHideSplashScreen()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            setAnimateSplashScreen(splashScreen)
+        if (isStartApp){
+            startTimer()
+            setHideSplashScreen()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setAnimateSplashScreen(splashScreen)
+            }
         }
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         loadingBinding = binding.progressLayout
         translateBinding = binding.translateLayout
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
+        isStartApp = false
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(KEY_IS_START_APP, isStartApp)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -227,6 +240,8 @@ class TranslateActivity : BaseTranslateActivity(), AndroidScopeComponent {
     companion object {
         const val DURATION_SPLASH_SCREEN = 1000L
         const val TIMER_DELAY = 10000L
+        private const val KEY_IS_START_APP = "KeyIsStartApp"
     }
 
 }
+

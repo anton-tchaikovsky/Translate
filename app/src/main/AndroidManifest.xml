@@ -19,9 +19,11 @@
         <activity
             android:name=".view.TranslateHistoryActivity"
             android:exported="false"
+            android:theme="@style/Base.Theme.Translate"
             android:parentActivityName=".view.TranslateActivity" />
         <activity android:name=".view.TranslateFavoritesActivity"
             android:exported="false"
+            android:theme="@style/Base.Theme.Translate"
             android:parentActivityName=".view.TranslateActivity" />
         <activity
             android:name=".view.TranslateActivity"
@@ -33,6 +35,7 @@
         </activity>
         <activity
             android:name="com.example.translate_foto_screen.TranslateFotoActivity"
+            android:theme="@style/Base.Theme.Translate"
             android:exported="false"/>
     </application>
 

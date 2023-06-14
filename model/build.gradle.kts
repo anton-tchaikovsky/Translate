@@ -10,5 +10,5 @@ android {
 }
 
 dependencies {
-
+    testImplementation(Test.junit)
 }
