@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:title="@string/title_toolbar"
+    app:titleTextColor="@android:color/black"
+    app:subtitle="@string/subtitle_toolbar"
+    app:subtitleTextColor="@android:color/black"
+    android:minHeight="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:navigationIconTint="@android:color/black"
+    app:navigationIcon="@drawable/baseline_arrow_back_24"/>

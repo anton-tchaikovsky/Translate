@@ -1,9 +1,24 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
+
     <style name="Base.Theme.Translate" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primary_theme_orange</item>
+        <item name="colorPrimaryContainer">@color/primary_container_theme_orange</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container_theme_orange</item>
+        <item name="colorSecondary">@color/secondary_theme_orange</item>
+        <item name="colorSecondaryContainer">@color/secondary_container_theme_orange</item>
+        <item name="colorSurface">@color/surface_theme_orange</item>
+        <item name="floatingActionButtonPrimaryStyle">@style/SearchFloatingActionButton</item>
     </style>
 
-    <style name="Theme.Translate" parent="Base.Theme.Translate" />
+    <style name="Base.Theme.Start" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
+        <item name="windowSplashScreenBackground">@color/surface_theme_orange</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/primary_container_theme_orange</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.Translate</item>
+
+    </style>
+    
+
+
 </resources>
